@@ -842,7 +842,7 @@ class HTML_Template_Sigma extends PEAR
         }
         $this->_triggers = array();
         $template = preg_replace($this->includeRegExp, "\$this->_makeTrigger('\\1', '__global__')", $template);
-        if (PEAR::isError($res = $this->setTemplate($template, $removeUnknownVariables, $removeEmptyBlocks))) {
+        if (SIGMA_OK !== ($res = $this->setTemplate($template, $removeUnknownVariables, $removeEmptyBlocks))) {
             return $res;
         } else {
             return $this->_writeCache($filename, '__global__');
@@ -914,7 +914,7 @@ class HTML_Template_Sigma extends PEAR
             return $template;
         }
         $template = preg_replace($this->includeRegExp, "\$this->_makeTrigger('\\1', '{$block}')", $template);
-        if (PEAR::isError($res = $this->addBlock($placeholder, $block, $template))) {
+        if (SIGMA_OK !== ($res = $this->addBlock($placeholder, $block, $template))) {
             return $res;
         } else {
             return $this->_writeCache($filename, $block);
@@ -988,7 +988,7 @@ class HTML_Template_Sigma extends PEAR
             return $template;
         }
         $template = preg_replace($this->includeRegExp, "\$this->_makeTrigger('\\1', '{$block}')", $template);
-        if (PEAR::isError($res = $this->replaceBlock($block, $template, $keepContent))) {
+        if (SIGMA_OK !== ($res = $this->replaceBlock($block, $template, $keepContent))) {
             return $res;
         } else {
             return $this->_writeCache($filename, $block);
@@ -1076,7 +1076,7 @@ class HTML_Template_Sigma extends PEAR
     */
     function setCallbackFunction($tplFunction, $callback, $preserveArgs = false)
     {
-        if (!$this->_callbackExists($callback)) {
+        if (!is_callable($callback)) {
             return $this->raiseError($this->errorMessage(SIGMA_INVALID_CALLBACK), SIGMA_INVALID_CALLBACK);
         }
         $this->_callback[$tplFunction] = array(
@@ -1412,7 +1412,7 @@ class HTML_Template_Sigma extends PEAR
         }
         // now pull triggers
         if (isset($this->_triggers[$block])) {
-            if (PEAR::isError($res = $this->_pullTriggers($this->_triggers[$block]))) {
+            if (SIGMA_OK !== ($res = $this->_pullTriggers($this->_triggers[$block]))) {
                 return $res;
             }
             unset($this->_triggers[$block]);
@@ -1552,7 +1552,7 @@ class HTML_Template_Sigma extends PEAR
     function _pullTriggers($triggers)
     {
         foreach ($triggers as $placeholder => $filename) {
-            if (PEAR::isError($res = $this->addBlockfile($placeholder, $placeholder, $filename))) {
+            if (SIGMA_OK !== ($res = $this->addBlockfile($placeholder, $placeholder, $filename))) {
                 return $res;
             }
             // we actually do not need the resultant block...
@@ -1676,30 +1676,6 @@ class HTML_Template_Sigma extends PEAR
         return (false === strpos($str, $this->openingDelimiter))? 
                 $str:
                 str_replace($this->openingDelimiter, $this->openingDelimiter . '%preserved%' . $this->closingDelimiter, $str);
-    }
-
-
-   /**
-    * Checks whether a callback function exists.
-    * 
-    * Borrowed from HTML_QuickForm, this version manages static methods as well
-    *
-    * @param  mixed     a callback, like one used by call_user_func_array()
-    * @access private
-    * @return bool
-    * @see setCallbackfunction()
-    */
-    function _callbackExists($callback)
-    {
-        if (is_string($callback)) {
-            return function_exists($callback);
-        } elseif (is_array($callback) && is_object($callback[0])) {
-            return method_exists($callback[0], $callback[1]);
-        } elseif (is_array($callback) && is_string($callback[0])) {
-            return in_array(strtolower($callback[1]), get_class_methods($callback[0]));
-        } else {
-            return false;
-        }
     }
 }
 ?>

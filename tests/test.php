@@ -1,8 +1,13 @@
 <?php
+/**
+ * Unit tests for HTML_Template_Sigma class
+ * 
+ * $Id$
+ */
 
-// This is where "prepared" templates will be stored, if you decide to run 
-// Sigma_cache_testcase. Make sure that this directory is writeable for PHP
-$Sigma_cache_dir = './templates/prepared';
+require_once 'System.php';
+
+$Sigma_cache_dir = System::mktemp('-d sigma');
 
 // What class are we going to test?
 // It is possible to also use the unit tests to test HTML_Template_ITX, which
@@ -17,18 +22,13 @@ $testcases = array(
     'Sigma_usage_testcase'
 );
 
-// BC hack to define PATH_SEPARATOR for version of PHP prior 4.3
-if(!defined('PATH_SEPARATOR')) {
-    if(defined('DIRECTORY_SEPARATOR') && DIRECTORY_SEPARATOR == "\\") {
-        define('PATH_SEPARATOR', ';');
-    } else {
-        define('PATH_SEPARATOR', ':');
-    }
+if (@file_exists('../' . $IT_class . '.php')) {
+    require_once '../' . $IT_class . '.php';
+} else {
+    require_once 'HTML/Template/' . $IT_class . '.php';
 }
-ini_set('include_path', '..'.PATH_SEPARATOR.ini_get('include_path'));
 
 require_once 'PHPUnit.php';
-require_once $IT_class . '.php';
 
 $suite =& new PHPUnit_TestSuite();
 
@@ -40,7 +40,7 @@ foreach ($testcases as $testcase) {
     }
 }
 
-require_once 'Console_TestListener.php';
+require_once './Console_TestListener.php';
 $result =& new PHPUnit_TestResult();
 $result->addListener(new Console_TestListener);
 

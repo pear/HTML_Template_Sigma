@@ -26,28 +26,28 @@ Features:
     </maintainer>
   </maintainers>
   <release>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
     <state>stable</state>
-    <date>2003-05-20</date>
+    <date>2003-10-02</date>
     <notes>
-* Added getBlockList() and getPlaceholderList() methods (thanks to Markus Wolff for the idea).
-* HTML_Template_IT compatibility: get() does not clear the parsed block contents by default.
-* Removed obsolete docs, current ones are in the PEAR manual.
+* Removed _callbackExists() method, is_callable() is used instead
+* Check for SIGMA_OK instead of PEAR::isError() where possible
+* Fixed unit tests packaging. Should work OK in PEAR installation
     </notes>
     <filelist>
       <dir name="/" baseinstalldir="HTML/Template">
         <file role="php" name="Sigma.php"/>
         <dir name="tests">
           <dir name="templates">
-            <file role="data" name="addblock.html"/>
-            <file role="data" name="blockiteration.html"/>
-            <file role="data" name="blocks.html"/>
-            <file role="data" name="callback.html"/>
-            <file role="data" name="globals.html"/>
-            <file role="data" name="__include.html"/>
-            <file role="data" name="include.html"/>
-            <file role="data" name="loadtemplatefile.html"/>
-            <file role="data" name="replaceblock.html"/>
+            <file role="test" name="addblock.html"/>
+            <file role="test" name="blockiteration.html"/>
+            <file role="test" name="blocks.html"/>
+            <file role="test" name="callback.html"/>
+            <file role="test" name="globals.html"/>
+            <file role="test" name="__include.html"/>
+            <file role="test" name="include.html"/>
+            <file role="test" name="loadtemplatefile.html"/>
+            <file role="test" name="replaceblock.html"/>
           </dir>
 		  <file role="test" name="Console_TestListener.php"/>
           <file role="test" name="Sigma_api_testcase.php"/>
@@ -75,6 +75,16 @@ Features:
     </filelist>
   </release>
   <changelog>
+    <release>
+      <version>1.0.1</version>
+      <state>stable</state>
+      <date>2003-05-20</date>
+      <notes>
+* Added getBlockList() and getPlaceholderList() methods (thanks to Markus Wolff for the idea).
+* HTML_Template_IT compatibility: get() does not clear the parsed block contents by default.
+* Removed obsolete docs, current ones are in the PEAR manual.
+      </notes>
+    </release>
   	<release>
       <version>1.0</version>
       <state>stable</state>
