@@ -284,15 +284,12 @@ class HTML_Template_Sigma extends PEAR
    /**
     * $_options['preserve_data'] If false, then substitute variables and remove empty 
     * placeholders also in data passed through setVariable (see also bugs #20199, #21951)
-    * $_options['use_preg'] Whether to use preg_replace instead of str_replace in parse() 
-    * (this is a HTML_Template_IT backwards compatibility feature, see also bugs #21951, #20392)
     * $_options['trim_on_save'] Whether to trim extra whitespace from template on cache save.
     * Generally safe to have this on, unless you have <pre></pre> in templates or want to 
     * preserve HTML indentantion
     */
     var $_options = array(
         'preserve_data' => false,
-        'use_preg'      => false,
         'trim_on_save'  => true
     );
 
@@ -585,9 +582,8 @@ class HTML_Template_Sigma extends PEAR
         // if we are inside a hidden block, don't bother
         if (!$fakeParse) {
             if (0 != count($vars) && (!$flagRecursion || !empty($this->_functions[$block]))) {
-                $varKeys     = $this->_options['use_preg']? array_map(array(&$this, '_addPregDelimiters'), array_keys($vars)): array_keys($vars);
+                $varKeys     = array_keys($vars);
                 $varValues   = $this->_options['preserve_data']? array_map(array(&$this, '_preserveOpeningDelimiter'), array_values($vars)): array_values($vars);
-                $funcReplace = $this->_options['use_preg']? 'preg_replace': 'str_replace';
             }
             // perform callbacks
             if (!empty($this->_functions[$block])) {
@@ -597,7 +593,7 @@ class HTML_Template_Sigma extends PEAR
                     if (!isset($vars[$placeholder])) {
                         $args = array();
                         foreach ($data['args'] as $arg) {
-                            $args[] = empty($varKeys)? $arg: $funcReplace($varKeys, $varValues, $arg);
+                            $args[] = empty($varKeys)? $arg: str_replace($varKeys, $varValues, $arg);
                         }
                         if (isset($this->_callback[$data['name']])) {
                             $res = call_user_func_array($this->_callback[$data['name']], $args);
@@ -613,7 +609,7 @@ class HTML_Template_Sigma extends PEAR
             // substitute variables only on non-recursive call, thus all
             // variables from all inner blocks get substituted
             if (!$flagRecursion && !empty($varKeys)) {
-                $outer = $funcReplace($varKeys, $varValues, $outer);
+                $outer = str_replace($varKeys, $varValues, $outer);
             }
 
             // check whether the block is considered "empty" and append parsed content if not
@@ -1554,18 +1550,6 @@ class HTML_Template_Sigma extends PEAR
         }
         return substr($code, 0, $i);
     } // end func _getToken
-
-
-   /**
-    * Adds delimiters to a string, so it can be used as a pattern in preg_* functions
-    * 
-    * @param string
-    * @return string
-    */
-    function _addPregDelimiters($str)
-    {
-        return '@' . $str . '@';
-    }
 
 
    /**
