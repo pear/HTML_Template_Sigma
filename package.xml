@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE package SYSTEM "../package.dtd">
+<package version="1.0">
+  <name>HTML_Template_Sigma</name>
+  <summary>An implementation of Integrated Templates API with template 'compilation' added</summary>
+  <description>
+HTML_Template_Sigma implements Integrated Templates API designed by Ulf Wendel.
+
+Features:
+* Nested blocks. Nesting is controlled by the engine.
+* Ability to include files from within template: &amp;lt;!-- INCLUDE --&amp;gt;
+* Automatic removal of empty blocks and unknown variables (methods to manually tweak/override this are also available)
+* Methods for runtime addition and replacement of blocks in templates
+* Callback functions (NOT RECOMMENDED, API may change in future release)
+* 'Compiled' templates: the engine has to parse a template file using regular expressions to find all the blocks and variable placeholders. This is a very &quot;expensive&quot; operation and is an overkill to do on every page request: templates seldom change on production websites. Thus this feature: an internal representation of the template structure is saved into a file and this file gets loaded instead of the source one on subsequent requests (unless the source changes)
+  </description>
+  <maintainers>
+    <maintainer>
+      <user>avb</user>
+      <role>lead</role>
+      <name>Alexey Borzov</name>
+      <email>avb@php.net</email>
+    </maintainer>
+  </maintainers>
+  <license>PHP License</license>
+  <release>
+    <version>0.9</version>
+    <state>stable</state>
+    <date>2003-04-04</date>
+    <notes>Initial PEAR release</notes>
+    <filelist>
+      <dir name="/" baseinstalldir="HTML/Template">
+        <file role="php" name="Sigma.php"/>
+        <dir name="tests">
+          <dir name="templates">
+            <file role="data" name="addblock.html"/>
+            <file role="data" name="blockiteration.html"/>
+            <file role="data" name="blocks.html"/>
+            <file role="data" name="globals.html"/>
+            <file role="data" name="__include.html"/>
+            <file role="data" name="include.html"/>
+            <file role="data" name="loadtemplatefile.html"/>
+            <file role="data" name="replaceblock.html"/>
+          </dir>
+		  <file role="test" name="Console_TestListener.php"/>
+          <file role="test" name="Sigma_api_testcase.php"/>
+          <file role="test" name="Sigma_cache_testcase.php"/>
+          <file role="test" name="Sigma_usage_testcase.php"/>
+          <file role="test" name="test.php"/>
+        </dir>
+        <dir name="docs">
+          <file role="doc" name="readme.txt"></file>
+        </dir>
+      </dir>
+    </filelist>
+  </release>
+</package>
