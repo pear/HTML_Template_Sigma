@@ -26,13 +26,21 @@ Features:
     </maintainer>
   </maintainers>
   <release>
-    <version>1.0.2</version>
+    <version>1.1.0</version>
     <state>stable</state>
-    <date>2003-10-02</date>
+    <date>2004-04-14</date>
     <notes>
-* Removed _callbackExists() method, is_callable() is used instead
-* Check for SIGMA_OK instead of PEAR::isError() where possible
-* Fixed unit tests packaging. Should work OK in PEAR installation
+* Fixed #876 (get_class() and get_class_methods() usage with PHP5)
+  Unit tests run on PHP5, all tests pass.
+* Added clearVariables() method (see also #939)
+* Added shorthand syntax for callbacks: {var:callback} instead of 
+  func_callback({var})
+* Added builtin callbacks
+	'h' for htmlspecialchars()
+	'u' for urlencode()
+	'j' to escape the string for usage in Javascript
+
+This release is dedicated to Lukas Smith
     </notes>
     <filelist>
       <dir name="/" baseinstalldir="HTML/Template">
@@ -75,6 +83,16 @@ Features:
     </filelist>
   </release>
   <changelog>
+    <release>
+      <version>1.0.2</version>
+      <state>stable</state>
+      <date>2003-10-02</date>
+      <notes>
+* Removed _callbackExists() method, is_callable() is used instead
+* Check for SIGMA_OK instead of PEAR::isError() where possible
+* Fixed unit tests packaging. Should work OK in PEAR installation
+      </notes>
+    </release>
     <release>
       <version>1.0.1</version>
       <state>stable</state>
