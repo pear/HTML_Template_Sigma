@@ -34,7 +34,7 @@ $suite =& new PHPUnit_TestSuite();
 
 foreach ($testcases as $testcase) {
     include_once $testcase . '.php';
-    $methods = preg_grep('/^test/', get_class_methods($testcase));
+    $methods = preg_grep('/^test/i', get_class_methods($testcase));
     foreach ($methods as $method) {
         $suite->addTest(new $testcase($method));
     }

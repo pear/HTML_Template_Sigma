@@ -39,7 +39,7 @@ class Sigma_Usage_TestCase extends PHPUnit_TestCase
 
     function _methodExists($name) 
     {
-        if (in_array(strtolower($name), get_class_methods($this->tpl))) {
+        if (in_array(strtolower($name), array_map('strtolower', get_class_methods($this->tpl)))) {
             return true;
         }
         $this->assertTrue(false, 'method '. $name . ' not implemented in ' . get_class($this->tpl));
