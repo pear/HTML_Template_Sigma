@@ -24,10 +24,13 @@ Features:
   </maintainers>
   <license>PHP License</license>
   <release>
-    <version>0.9</version>
+    <version>0.9.1</version>
     <state>stable</state>
-    <date>2003-04-04</date>
-    <notes>Initial PEAR release</notes>
+    <date>2003-04-18</date>
+    <notes>
+* Fix: if source template does not exist, do not load the 'prepared' one, throw an error instead.
+  Thanks to Maxim Panasiuk for the report.
+    </notes>
     <filelist>
       <dir name="/" baseinstalldir="HTML/Template">
         <file role="php" name="Sigma.php"/>
@@ -54,4 +57,12 @@ Features:
       </dir>
     </filelist>
   </release>
+  <changelog>
+    <release>
+      <version>0.9</version>
+      <state>stable</state>
+      <date>2003-04-04</date>
+      <notes>Initial PEAR release</notes>
+    </release>
+  </changelog>
 </package>
