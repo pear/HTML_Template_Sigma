@@ -33,7 +33,6 @@ define('SIGMA_PLACEHOLDER_NOT_FOUND',     -10);
 define('SIGMA_PLACEHOLDER_DUPLICATE',     -11);
 define('SIGMA_BLOCK_EXISTS',              -12);
 define('SIGMA_INVALID_CALLBACK',          -13);
-define('SIGMA_CONFLICT',                 -100);
 
 /**
 * HTML_Template_Sigma: implementation of Integrated Templates API with 
@@ -447,8 +446,7 @@ class HTML_Template_Sigma extends PEAR
                 SIGMA_PLACEHOLDER_NOT_FOUND => 'Variable placeholder \'%s\' not found',
                 SIGMA_PLACEHOLDER_DUPLICATE => 'Placeholder \'%s\' should be unique, found in multiple blocks',
                 SIGMA_BLOCK_EXISTS          => 'Block \'%s\' already exists',
-                SIGMA_INVALID_CALLBACK      => 'Callback does not exist',
-                SIGMA_CONFLICT              => 'Sorry, you cannot use both callbacks and template caching'
+                SIGMA_INVALID_CALLBACK      => 'Callback does not exist'
             );
         }
 
@@ -1174,6 +1172,7 @@ class HTML_Template_Sigma extends PEAR
         $this->_children              = array();
         $this->_parsedBlocks          = array();
         $this->_touchedBlocks         = array();
+        $this->_functions             = array();
         $this->flagGlobalParsed       = false;
     } // _resetTemplate
 
@@ -1224,11 +1223,13 @@ class HTML_Template_Sigma extends PEAR
             $this->_blocks[$block]         = $cache['blocks']['__global__'];
             $this->_blockVariables[$block] = $cache['variables']['__global__'];
             $this->_children[$block]       = $cache['children']['__global__'];
-            unset($cache['blocks']['__global__'], $cache['variables']['__global__'], $cache['children']['__global__']);
+            $this->_functions[$block]      = $cache['functions']['__global__'];
+            unset($cache['blocks']['__global__'], $cache['variables']['__global__'], $cache['children']['__global__'], $cache['functions']['__global__']);
         }
         $this->_blocks         = array_merge($this->_blocks, $cache['blocks']);
         $this->_blockVariables = array_merge($this->_blockVariables, $cache['variables']);
         $this->_children       = array_merge($this->_children, $cache['children']);
+        $this->_functions      = array_merge($this->_functions, $cache['functions']);
 
         // the same thing gets done in addBlockfile()
         if (!empty($placeholder)) {
@@ -1291,7 +1292,8 @@ class HTML_Template_Sigma extends PEAR
             $cache = array(
                 'blocks'    => array(),
                 'variables' => array(),
-                'children'  => array()
+                'children'  => array(),
+                'functions' => array()
             );
             $cachedName = $this->_cachedName($filename);
             $this->_buildCache($cache, $block);
@@ -1340,6 +1342,7 @@ class HTML_Template_Sigma extends PEAR
                                        );
         }
         $cache['variables'][$block] = $this->_blockVariables[$block];
+        $cache['functions'][$block] = isset($this->_functions[$block])? $this->_functions[$block]: array();
         if (!isset($this->_children[$block])) {
             $cache['children'][$block] = array();
         } else {
@@ -1374,6 +1377,7 @@ class HTML_Template_Sigma extends PEAR
         unset($this->_blockVariables[$block]);
         unset($this->_hiddenBlocks[$block]);
         unset($this->_touchedBlocks[$block]);
+        unset($this->_functions[$block]);
         if (!$keepContent) {
             unset($this->_parsedBlocks[$block]);
         }
@@ -1455,6 +1459,9 @@ class HTML_Template_Sigma extends PEAR
                 $this->_children[$parents[0]] = array_merge($this->_children[$parents[0]], $this->_children[$placeholder]);
             }
             $this->_blockVariables[$parents[0]] = array_merge($this->_blockVariables[$parents[0]], $this->_blockVariables[$placeholder]);
+            if (isset($this->_functions[$placeholder])) {
+                $this->_functions[$parents[0]] = array_merge($this->_functions[$parents[0]], $this->_functions[$placeholder]);
+            }
             // substitute the block's contents into parent's
             $this->_blocks[$parents[0]] = str_replace(
                                             $this->openingDelimiter . '__' . $placeholder . '__' . $this->closingDelimiter, 
@@ -1462,7 +1469,7 @@ class HTML_Template_Sigma extends PEAR
                                             $this->_blocks[$parents[0]]
                                           );
             // remove the stuff that is no more needed
-            unset($this->_blocks[$placeholder], $this->_blockVariables[$placeholder], $this->_children[$placeholder]);
+            unset($this->_blocks[$placeholder], $this->_blockVariables[$placeholder], $this->_children[$placeholder], $this->_functions[$placeholder]);
             unset($this->_children[$parents[0]][$placeholder], $this->_blockVariables[$parents[0]]['__' . $placeholder . '__']);
         }
         return SIGMA_OK;
