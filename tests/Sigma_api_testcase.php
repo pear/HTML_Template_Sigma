@@ -313,10 +313,7 @@ class Sigma_api_TestCase extends PHPUnit_TestCase
         if (PEAR::isError($result)) {
             $this->assertTrue(false, 'Error loading template file: '. $result->getMessage());
         }
-        $this->tpl->setVariable(array(
-            'username' => 'luser',
-            'USERNAME' => 'luser'
-        ));
+        $this->tpl->setVariable('username', 'luser');
         $this->tpl->setCallbackFunction('uppercase', 'strtoupper');
         $this->tpl->setCallbackFunction('russian', array(&$this, '_doRussian'), true);
         $this->tpl->setCallbackFunction('lowercase', 'strtolower');
@@ -333,6 +330,38 @@ class Sigma_api_TestCase extends PHPUnit_TestCase
     {
         $ary = array('Hello, {username}!' => 'Привет, {username}!');
         return isset($ary[$arg])? $ary[$arg]: $arg;
+    }
+
+    function testGetBlockList()
+    {
+        // expected tree...
+        $tree = array(
+            'name'     => '__global__',
+            'children' => array(
+                array(
+                    'name'     => 'outer_block',
+                    'children' => array(
+                        array('name' => 'inner_block')
+                    )
+                )
+            )
+        );
+
+        $result = $this->tpl->loadTemplatefile('blockiteration.html', true, true);
+        if (PEAR::isError($result)) {
+            $this->assertTrue(false, 'Error loading template file: '. $result->getMessage());
+        }
+        $this->assertEquals($tree, $this->tpl->getBlockList('__global__', true));
+        $this->assertEquals(array('inner_block'), $this->tpl->getBlockList('outer_block'));
+    }
+    
+    function testGetPlaceholderList()
+    {
+        $result = $this->tpl->loadTemplatefile('blockiteration.html', true, true);
+        if (PEAR::isError($result)) {
+            $this->assertTrue(false, 'Error loading template file: '. $result->getMessage());
+        }
+        $this->assertEquals(array('outer'), $this->tpl->getPlaceholderList('outer_block'));
     }
 }
 

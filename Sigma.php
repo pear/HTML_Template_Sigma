@@ -499,7 +499,7 @@ class HTML_Template_Sigma extends PEAR
     * @access   public
     * @see      show()
     */
-    function get($block = '__global__', $clear = true)
+    function get($block = '__global__', $clear = false)
     {
         if (!isset($this->_blocks[$block])) {
             return $this->raiseError($this->errorMessage(SIGMA_BLOCK_NOT_FOUND, $block), SIGMA_BLOCK_NOT_FOUND);
@@ -1085,6 +1085,65 @@ class HTML_Template_Sigma extends PEAR
         );
         return SIGMA_OK;
     } // end func setCallbackFunction
+
+
+   /**
+    * Returns a list of blocks within a template.
+    *
+    * If $recursive is false, it returns just a 'flat' array of $parent's
+    * direct subblocks. If $recursive is true, it builds a tree of template
+    * blocks using $parent as root. Tree structure is compatible with 
+    * PEAR::Tree's Memory_Array driver.
+    * 
+    * @param    string  parent block name 
+    * @param    bool    whether to return a tree of child blocks (true) or a 'flat' array (false)
+    * @access   public
+    * @return   array   a list of child blocks
+    * @throws   PEAR_Error
+    */
+    function getBlockList($parent = '__global__', $recursive = false)
+    {
+        if (!isset($this->_blocks[$parent])) {
+            return $this->raiseError($this->errorMessage(SIGMA_BLOCK_NOT_FOUND, $parent), SIGMA_BLOCK_NOT_FOUND);
+        }
+        if (!$recursive) {
+            return isset($this->_children[$parent])? array_keys($this->_children[$parent]): array();
+        } else {
+            $ret = array('name' => $parent);
+            if (!empty($this->_children[$parent])) {
+                $ret['children'] = array();
+                foreach (array_keys($this->_children[$parent]) as $child) {
+                    $ret['children'][] = $this->getBlockList($child, true);
+                }
+            }
+            return $ret;
+        }
+    }
+
+
+   /**
+    * Returns a list of placeholders within a block.
+    * 
+    * Only 'normal' placeholders are returned, not auto-created ones.
+    *
+    * @param    string  block name
+    * @access   public
+    * @return   array   a list of placeholders
+    * @throws   PEAR_Error
+    */
+    function getPlaceholderList($block = '__global__')
+    {
+        if (!isset($this->_blocks[$block])) {
+            return $this->raiseError($this->errorMessage(SIGMA_BLOCK_NOT_FOUND, $block), SIGMA_BLOCK_NOT_FOUND);
+        }
+        $ret = array();
+        foreach ($this->_blockVariables[$block] as $var => $v) {
+            if ('__' != substr($var, 0, 2) || '__' != substr($var, -2)) {
+                $ret[] = $var;
+            }
+        }
+        return $ret;
+    }
 
 
     //------------------------------------------------------------

@@ -109,10 +109,11 @@ foreach ($hideAry as $item) {
 }
 
 // 5. Using get() to move blocks around
-// This one is pretty simple. Note that we pass false to get(), this is
-// done to prevent clearing the original block, which is the default behaviour
+// This one is pretty simple. Note that by default get() does not clear the 
+// original block, so a copy will be created. If you want to move the block,
+// pass true as a second parameter to get()
 $tpl->parse('list_block');
-$tpl->setVariable('duplicate', $tpl->get('list_block', false));
+$tpl->setVariable('duplicate', $tpl->get('list_block'));
 
 // output the results
 $tpl->show();
