@@ -26,28 +26,13 @@ Features:
     </maintainer>
   </maintainers>
   <release>
-    <version>1.0</version>
+    <version>1.0.1</version>
     <state>stable</state>
-    <date>2003-04-28</date>
+    <date>2003-05-20</date>
     <notes>
-This release has Sigma's template functions/callbacks infrastructure significantly enhanced.
-This unfortunately means some backwards compatibility breaks. If you were using callbacks before, please carefully examine the release notes and test you scripts before upgrading to 1.0.
-If you weren't using callbacks due to their shortcomings it is a good time to give them a try, consult docs/example_4.php for some of their possible applications.
-
-Template functions/callbacks changes and incompatibilities:
-
-* Templates are parsed for function calls not only on setTemplate()/loadTemplatefile(), but on addBlock()/addBlockfile() and replaceBlock()/replaceBlockfile() as well.
-* The arguments to template functions can now contain variable placeholders: func_uppercase('Hello, {username}!).
-* Template functions are now compatible with template caching.
-* Method setCallbackFunction() now accepts a callback that is compatible with call_user_func() as its second argument. Its third argument is used to control variable substitution in function arguments.
-* Method performCallback() was removed. Callbacks are now called automatically when the block containing them is parse()'d.
-* Callbacks are now called via call_user_func_array() instead of call_user_func(). This makes it possible to use built-in functions as callbacks, but also means that you have to rewrite your old functions!
-* Usage example is available in docs/example_4.php
-
-Other changes:
-
-* Option 'use_preg' was removed.
-* Stricter error checking when doing addBlockfile() with a prepared template.
+* Added getBlockList() and getPlaceholderList() methods (thanks to Markus Wolff for the idea).
+* HTML_Template_IT compatibility: get() does not clear the parsed block contents by default.
+* Removed obsolete docs, current ones are in the PEAR manual.
     </notes>
     <filelist>
       <dir name="/" baseinstalldir="HTML/Template">
@@ -71,8 +56,6 @@ Other changes:
           <file role="test" name="test.php"/>
         </dir>
         <dir name="docs">
-          <file role="doc" name="readme.txt" />
-          <file role="doc" name="cache-faq.txt" />
           <file role="doc" name="example_1.php" />
           <file role="doc" name="example_2.php" />
           <file role="doc" name="example_3.php" />
@@ -92,6 +75,31 @@ Other changes:
     </filelist>
   </release>
   <changelog>
+  	<release>
+      <version>1.0</version>
+      <state>stable</state>
+      <date>2003-04-28</date>
+      <notes>
+This release has Sigma's template functions/callbacks infrastructure significantly enhanced.
+This unfortunately means some backwards compatibility breaks. If you were using callbacks before, please carefully examine the release notes and test you scripts before upgrading to 1.0.
+If you weren't using callbacks due to their shortcomings it is a good time to give them a try, consult docs/example_4.php for some of their possible applications.
+
+Template functions/callbacks changes and incompatibilities:
+
+* Templates are parsed for function calls not only on setTemplate()/loadTemplatefile(), but on addBlock()/addBlockfile() and replaceBlock()/replaceBlockfile() as well.
+* The arguments to template functions can now contain variable placeholders: func_uppercase('Hello, {username}!).
+* Template functions are now compatible with template caching.
+* Method setCallbackFunction() now accepts a callback that is compatible with call_user_func() as its second argument. Its third argument is used to control variable substitution in function arguments.
+* Method performCallback() was removed. Callbacks are now called automatically when the block containing them is parse()'d.
+* Callbacks are now called via call_user_func_array() instead of call_user_func(). This makes it possible to use built-in functions as callbacks, but also means that you have to rewrite your old functions!
+* Usage example is available in docs/example_4.php
+
+Other changes:
+
+* Option 'use_preg' was removed.
+* Stricter error checking when doing addBlockfile() with a prepared template.
+      </notes>
+  	</release>
     <release>
       <version>0.9.2</version>
       <state>stable</state>
