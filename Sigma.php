@@ -1235,7 +1235,9 @@ class HTML_Template_Sigma extends PEAR
         }
         $cachedName = $this->_cachedName($filename);
         $sourceName = $this->_sourceName($filename);
-        if (@file_exists($cachedName) && (filemtime($cachedName) > @filemtime($sourceName))) {
+        // if $sourceName does not exist, error will be thrown later
+        $sourceTime = @filemtime($sourceName);
+        if ((false !== $sourceTime) && @file_exists($cachedName) && (filemtime($cachedName) > $sourceTime)) {
             return true;
         } else {
             return false;
