@@ -26,21 +26,12 @@ Features:
     </maintainer>
   </maintainers>
   <release>
-    <version>1.1.0</version>
+    <version>1.1.1</version>
     <state>stable</state>
-    <date>2004-04-14</date>
+    <date>2004-05-31</date>
     <notes>
-* Fixed #876 (get_class() and get_class_methods() usage with PHP5)
-  Unit tests run on PHP5, all tests pass.
-* Added clearVariables() method (see also #939)
-* Added shorthand syntax for callbacks: {var:callback} instead of 
-  func_callback({var})
-* Added builtin callbacks
-	'h' for htmlspecialchars()
-	'u' for urlencode()
-	'j' to escape the string for usage in Javascript
-
-This release is dedicated to Lukas Smith
+Callbacks are not called if the block containing them is empty. Thanks
+to Sergey Vasiliev for the suggestion.
     </notes>
     <filelist>
       <dir name="/" baseinstalldir="HTML/Template">
@@ -83,6 +74,24 @@ This release is dedicated to Lukas Smith
     </filelist>
   </release>
   <changelog>
+    <release>
+      <version>1.1.0</version>
+      <state>stable</state>
+      <date>2004-04-14</date>
+      <notes>
+* Fixed #876 (get_class() and get_class_methods() usage with PHP5)
+  Unit tests run on PHP5, all tests pass.
+* Added clearVariables() method (see also #939)
+* Added shorthand syntax for callbacks: {var:callback} instead of 
+  func_callback({var})
+* Added builtin callbacks
+	'h' for htmlspecialchars()
+	'u' for urlencode()
+	'j' to escape the string for usage in Javascript
+
+This release is dedicated to Lukas Smith
+      </notes>
+    </release>
     <release>
       <version>1.0.2</version>
       <state>stable</state>

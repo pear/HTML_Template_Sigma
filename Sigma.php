@@ -608,36 +608,37 @@ class HTML_Template_Sigma extends PEAR
                 $varKeys     = array_keys($vars);
                 $varValues   = $this->_options['preserve_data']? array_map(array(&$this, '_preserveOpeningDelimiter'), array_values($vars)): array_values($vars);
             }
-            // perform callbacks
-            if (!empty($this->_functions[$block])) {
-                foreach ($this->_functions[$block] as $id => $data) {
-                    $placeholder = $this->openingDelimiter . '__function_' . $id . '__' . $this->closingDelimiter;
-                    // do not waste time calling function more than once
-                    if (!isset($vars[$placeholder])) {
-                        $args         = array();
-                        $preserveArgs = isset($this->_callback[$data['name']]['preserveArgs']) && $this->_callback[$data['name']]['preserveArgs'];
-                        foreach ($data['args'] as $arg) {
-                            $args[] = (empty($varKeys) || $preserveArgs)? $arg: str_replace($varKeys, $varValues, $arg);
-                        }
-                        if (isset($this->_callback[$data['name']]['data'])) {
-                            $res = call_user_func_array($this->_callback[$data['name']]['data'], $args);
-                        } else {
-                            $res = isset($args[0])? $args[0]: '';
-                        }
-                        $outer = str_replace($placeholder, $res, $outer);
-                        // save the result to variable cache, it can be requested somewhere else
-                        $vars[$placeholder] = $res;
-                    }
-                }
-            }
-            // substitute variables only on non-recursive call, thus all
-            // variables from all inner blocks get substituted
-            if (!$flagRecursion && !empty($varKeys)) {
-                $outer = str_replace($varKeys, $varValues, $outer);
-            }
 
             // check whether the block is considered "empty" and append parsed content if not
             if (!$empty || ('__global__' == $block) || !$this->removeEmptyBlocks || isset($this->_touchedBlocks[$block])) {
+                // perform callbacks
+                if (!empty($this->_functions[$block])) {
+                    foreach ($this->_functions[$block] as $id => $data) {
+                        $placeholder = $this->openingDelimiter . '__function_' . $id . '__' . $this->closingDelimiter;
+                        // do not waste time calling function more than once
+                        if (!isset($vars[$placeholder])) {
+                            $args         = array();
+                            $preserveArgs = isset($this->_callback[$data['name']]['preserveArgs']) && $this->_callback[$data['name']]['preserveArgs'];
+                            foreach ($data['args'] as $arg) {
+                                $args[] = (empty($varKeys) || $preserveArgs)? $arg: str_replace($varKeys, $varValues, $arg);
+                            }
+                            if (isset($this->_callback[$data['name']]['data'])) {
+                                $res = call_user_func_array($this->_callback[$data['name']]['data'], $args);
+                            } else {
+                                $res = isset($args[0])? $args[0]: '';
+                            }
+                            $outer = str_replace($placeholder, $res, $outer);
+                            // save the result to variable cache, it can be requested somewhere else
+                            $vars[$placeholder] = $res;
+                        }
+                    }
+                }
+                // substitute variables only on non-recursive call, thus all
+                // variables from all inner blocks get substituted
+                if (!$flagRecursion && !empty($varKeys)) {
+                    $outer = str_replace($varKeys, $varValues, $outer);
+                }
+
                 $this->_parsedBlocks[$block] .= $outer;
                 if (isset($this->_touchedBlocks[$block])) {
                     unset($this->_touchedBlocks[$block]);
