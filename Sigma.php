@@ -111,9 +111,9 @@ define('SIGMA_INVALID_CALLBACK',          -13);
 * $html = $tpl->get();
 * </code>
 *
-* @author   Ulf Wendel <uw@netuse.de>
+* @author   Ulf Wendel <ulf.wendel@phpdoc.de>
 * @author   Alexey Borzov <avb@php.net>
-* @version  $Id$
+* @version  $Revision$
 * @access   public
 * @package  HTML_Template_Sigma
 */
@@ -133,27 +133,27 @@ class HTML_Template_Sigma extends PEAR
     * @access   public
     * @see      $openingDelimiter, $blocknameRegExp, $variablenameRegExp
     */
-    var $closingDelimiter     = '}';
+    var $closingDelimiter = '}';
 
    /**
-    * RegExp for matching the block names in the template
+    * RegExp for matching the block names in the template.
     * Per default "sm" is used as the regexp modifier, "i" is missing.
     * That means a case sensitive search is done.
     * @var      string
     * @access   public
     * @see      $variablenameRegExp, $openingDelimiter, $closingDelimiter
     */
-    var $blocknameRegExp    = '[0-9A-Za-z_-]+';
+    var $blocknameRegExp = '[0-9A-Za-z_-]+';
 
    /**
-    * RegExp matching a variable placeholder in the template
+    * RegExp matching a variable placeholder in the template.
     * Per default "sm" is used as the regexp modifier, "i" is missing.
     * That means a case sensitive search is done.
     * @var      string    
     * @access   public
     * @see      $blocknameRegExp, $openingDelimiter, $closingDelimiter
     */
-    var $variablenameRegExp    = '[0-9A-Za-z_-]+';
+    var $variablenameRegExp = '[0-9A-Za-z_-]+';
 
    /**
     * RegExp used to find variable placeholder, filled by the constructor
@@ -164,8 +164,7 @@ class HTML_Template_Sigma extends PEAR
 
    /**
     * RegExp used to strip unused variable placeholders
-    * @brother  $variablesRegExp
-    * @see      HTML_Template_Sigma()
+    * @see      $variablesRegExp, HTML_Template_Sigma()
     */
     var $removeVariablesRegExp = '';
 
@@ -200,49 +199,59 @@ class HTML_Template_Sigma extends PEAR
     * Template blocks and their content
     * @var      array
     * @see      _buildBlocks()
+    * @access   private
     */
     var $_blocks = array();
 
    /**
     * Content of parsed blocks
     * @var      array
+    * @see      get(), parse()
+    * @access   private
     */
     var $_parsedBlocks = array();
 
    /**
     * Variable names that appear in the block
     * @var      array
+    * @see      _buildBlockVariables()
+    * @access   private
     */
     var $_blockVariables = array();
 
    /**
     * Inner blocks inside the block
     * @var      array
+    * @see      _buildBlocks()
+    * @access   private
     */
     var $_children = array();
 
    /**
     * List of blocks to preserve even if they are "empty"
-    * @var  array    $_touchedBlocks
-    * @see  touchBlock(), $removeEmptyBlocks
+    * @var      array
+    * @see      touchBlock(), $removeEmptyBlocks
+    * @access   private
     */
     var $_touchedBlocks = array();
 
    /**
     * List of blocks which should not be shown even if not "empty"
-    * @var  array    $_hiddenBlocks
-    * @see  hideBlock(), $removeEmptyBlocks
+    * @var      array
+    * @see      hideBlock(), $removeEmptyBlocks
+    * @access   private
     */
     var $_hiddenBlocks = array();
 
    /**
-    * Variables for substitution
+    * Variables for substitution.
     *
     * Variables are kept in this array before the replacements are done.
     * This allows automatic removal of empty blocks.
     * 
-    * @var    array
-    * @see    setVariable()
+    * @var      array
+    * @see      setVariable()
+    * @access   private
     */
     var $_variables = array();
 
@@ -254,24 +263,24 @@ class HTML_Template_Sigma extends PEAR
     * only global variables are substituted into the block, it is
     * still considered "empty".
     *
-    * @var array
-    * @see setVariable(), setGlobalVariable()
+    * @var      array
+    * @see      setVariable(), setGlobalVariable()
+    * @access   private
     */
     var $_globalVariables = array();
 
    /**
     * Root directory for "source" templates
-    * 
     * @var    string
     * @see    HTML_Template_Sigma(), setRoot()
     */
     var $fileRoot = '';
 
    /**
-    * Directory for "prepared" templates cache
-    * 
-    * @var    string
-    * @see    HTML_Template_Sigma(), setCacheRoot()
+    * Directory to store the "prepared" templates in
+    * @var      string
+    * @see      HTML_Template_Sigma(), setCacheRoot()
+    * @access   private
     */
     var $_cacheRoot = null;
 
@@ -282,8 +291,10 @@ class HTML_Template_Sigma extends PEAR
     var $flagGlobalParsed = false;
 
    /**
+    * Options to control some finer aspects of Sigma's work.
+    * 
     * $_options['preserve_data'] If false, then substitute variables and remove empty 
-    * placeholders also in data passed through setVariable (see also bugs #20199, #21951)
+    * placeholders in data passed through setVariable (see also bugs #20199, #21951)
     * $_options['trim_on_save'] Whether to trim extra whitespace from template on cache save.
     * Generally safe to have this on, unless you have <pre></pre> in templates or want to 
     * preserve HTML indentantion
@@ -307,21 +318,22 @@ class HTML_Template_Sigma extends PEAR
 
    /**
     * RegExp used to grep function calls in the template (set by the constructor)
-    *
     * @var    string
-    * @see    HTML_Template_Sigma()
+    * @see    _buildFunctionlist(), HTML_Template_Sigma()
     */
     var $functionRegExp = '';
 
    /**
     * List of functions found in the template.
     * @var    array
+    * @access private
     */
     var $_functions = array();
 
    /**
     * List of callback functions specified by the user
     * @var    array
+    * @access private
     */
     var $_callback = array();
 
@@ -333,9 +345,11 @@ class HTML_Template_Sigma extends PEAR
 
    /**
     * Files queued for inclusion
-    * @var array
+    * @var    array
+    * @access private
     */
     var $_triggers = array();
+
 
    /**
     * Constructor: builds some complex regular expressions and optionally 
@@ -344,9 +358,9 @@ class HTML_Template_Sigma extends PEAR
     * Make sure that you call this constructor if you derive your template
     * class from this one.
     *
-    * @param $root       string  root directory for templates
-    * @param $cacheRoot  string  directory to cache "prepared" templates in
-    * @see setRoot()
+    * @param string  root directory for templates
+    * @param string  directory to cache "prepared" templates in
+    * @see   setRoot(), setCacheRoot()
     */
     function HTML_Template_Sigma($root = '', $cacheRoot = '')
     {
@@ -379,13 +393,17 @@ class HTML_Template_Sigma extends PEAR
 
 
    /**
-    * Sets the directory to cache "prepared" templates in.
+    * Sets the directory to cache "prepared" templates in, the directory should be writable for PHP.
     * 
-    * The directory should be writable to PHP, of course. The "prepared"
-    * template is essentially a serialized array of $_blocks, $_blockVariables 
-    * and $_children. This allows to bypass expensive calls to 
-    * _buildBlockVariables() and especially _buildBlocks() when reading the
-    * "prepared" template instead of the "source" one.
+    * The "prepared" template contains an internal representation of template 
+    * structure: essentially a serialized array of $_blocks, $_blockVariables, 
+    * $_children and $_functions, may also contain $_triggers. This allows 
+    * to bypass expensive calls to _buildBlockVariables() and especially 
+    * _buildBlocks() when reading the "prepared" template instead of 
+    * the "source" one.
+    * 
+    * The files in this cache do not have any TTL and are regenerated when the
+    * source templates change.
     * 
     * @param    string  directory name
     * @see      HTML_Template_Sigma(), _getCached(), _writeCache()
@@ -463,7 +481,7 @@ class HTML_Template_Sigma extends PEAR
     * 
     * @access  public
     * @param   string  block name
-    * @brother get()
+    * @see     get()
     */
     function show($block = '__global__')
     {
@@ -513,8 +531,8 @@ class HTML_Template_Sigma extends PEAR
     * Parses the given block.
     *    
     * @param    string    block name
-    * @param    boolean   true if the function is called recursively
-    * @param    boolean   true if we are inside a "hidden" block
+    * @param    boolean   true if the function is called recursively (do not set this to true yourself!)
+    * @param    boolean   true if parsing a "hidden" block (do not set this to true yourself!)
     * @access   public
     * @see      parseCurrentBlock()
     * @throws   PEAR_Error
@@ -631,8 +649,8 @@ class HTML_Template_Sigma extends PEAR
     * or with one array $variables["varname"] = "value" given setVariable($variables)
     * 
     * @access public
-    * @param mixed $variable  variable name or array ('varname'=>'value')
-    * @param string $value    variable value if $variable is not an array
+    * @param  mixed     variable name or array ('varname'=>'value')
+    * @param  string    variable value if $variable is not an array
     */
     function setVariable($variable, $value = '')
     {
@@ -648,9 +666,9 @@ class HTML_Template_Sigma extends PEAR
     * Sets a global variable value.
     * 
     * @access public
-    * @param mixed $variable  variable name or array ('varname'=>'value')
-    * @param string $value    variable value if $variable is not an array
-    * @see setVariable()
+    * @param  mixed     variable name or array ('varname'=>'value')
+    * @param  string    variable value if $variable is not an array
+    * @see    setVariable()
     */
     function setGlobalVariable($variable, $value = '')
     {
@@ -683,7 +701,7 @@ class HTML_Template_Sigma extends PEAR
    /**
     * Parses the current block
     * 
-    * @see      parse(), setCurrentBlock(), $currentBlock
+    * @see      parse(), setCurrentBlock()
     * @access   public
     */
     function parseCurrentBlock()
@@ -705,21 +723,22 @@ class HTML_Template_Sigma extends PEAR
 
 
    /**
-    * Preserves the block even if empty blocks should be removed
+    * Preserves the block even if empty blocks should be removed.
     *
-    * This is something special. Sometimes you have blocks that
-    * should be preserved although they are empty (no placeholder replaced).
-    * Think of a shopping basket. If it's empty you have to drop a message to
-    * the user. If it's filled you have to show the contents of the shopping baseket.
-    * Now where do you place the message that the basket is empty? It's no good
-    * idea to place it in you applications as customers tend to like unecessary minor
-    * text changes. Having another template file for an empty basket means that it's
-    * very likely that one fine day the filled and empty basket templates have different
-    * layout. I decided to introduce blocks that to not contain any placeholder but only
-    * text such as the message "Your shopping basked is empty".
-    *
-    * Now if there is no replacement done in such a block the block will be recognized
-    * as "empty" and by default ($removeEmptyBlocks = true) be stripped off. To avoid this
+    * Sometimes you have blocks that should be preserved although they are 
+    * empty (no placeholder replaced). Think of a shopping basket. If it's 
+    * empty you have to show a message to the user. If it's filled you have
+    * to show the contents of the shopping basket. Now where to place the 
+    * message that the basket is empty? It's not a good idea to place it 
+    * in you application as customers tend to like unecessary minor text
+    * changes. Having another template file for an empty basket means that 
+    * one fine day the filled and empty basket templates will have different
+    * layouts. 
+    * 
+    * So blocks that do not contain any placeholders but only messages like 
+    * "Your shopping basked is empty" are intoduced. Now if there is no 
+    * replacement done in such a block the block will be recognized as "empty"
+    * and by default ($removeEmptyBlocks = true) be stripped off. To avoid this
     * you can call touchBlock()
     *
     * @param    string      block name
@@ -742,14 +761,15 @@ class HTML_Template_Sigma extends PEAR
 
 
    /**
-    * Hides the block even if it is not "empty"
+    * Hides the block even if it is not "empty".
     * 
     * Is somewhat an opposite to touchBlock().
     * 
-    * Consider a block that should be visible to registered/"special" users only, but 
-    * its visibility is triggered by some little field passed in a large array 
-    * into setVariable(). You can either carefully juggle your variables to prevent the
-    * block from appearing (a fragile solution) or simply call hideBlock()
+    * Consider a block (a 'edit' link for example) that should be visible to 
+    * registered/"special" users only, but its visibility is triggered by 
+    * some little 'id' field passed in a large array into setVariable(). You 
+    * can either carefully juggle your variables to prevent the block from 
+    * appearing (a fragile solution) or simply call hideBlock()
     *
     * @param    string      block name
     * @return   mixed       SIGMA_OK on success, error object on failure
@@ -775,12 +795,12 @@ class HTML_Template_Sigma extends PEAR
     * You can either load a template file from disk with LoadTemplatefile() or set the
     * template manually using this function.
     * 
-    * @param        string      template content
-    * @param        boolean     remove unknown/unused variables?
-    * @param        boolean     remove empty blocks?
-    * @see          loadTemplatefile()
-    * @access       public
-    * @return       mixed       SIGMA_OK on success, error object on failure
+    * @access public
+    * @param  string      template content
+    * @param  boolean     remove unknown/unused variables?
+    * @param  boolean     remove empty blocks?
+    * @return mixed       SIGMA_OK on success, error object on failure
+    * @see    loadTemplatefile()
     */
     function setTemplate($template, $removeUnknownVariables = true, $removeEmptyBlocks = true)
     {
@@ -795,9 +815,9 @@ class HTML_Template_Sigma extends PEAR
 
 
    /**
-    * Loads a template file
+    * Loads a template file.
     * 
-    * If caching is on, then it checks whether a "prepared" template exists
+    * If caching is on, then it checks whether a "prepared" template exists.
     * If it does, it gets loaded instead of the original, if it does not, then
     * the original gets loaded and prepared and then the prepared version is saved.
     * addBlockfile() and replaceBlockfile() implement quite the same logic.
@@ -832,18 +852,13 @@ class HTML_Template_Sigma extends PEAR
    /**
     * Adds a block to the template changing a variable placeholder to a block placeholder.
     *
-    * Add means "replace a variable placeholder by a new block".
-    * This is different to PHPLib templates. The function loads a
-    * block, creates a handle for it and assigns it to a certain
-    * variable placeholder. To to the same with PHPLib templates you would
-    * call set_file() to create the handle and parse() to assign the
-    * parsed block to a variable. By this PHPLibstemplates assume that you tend
-    * to assign a block to more than one one placeholder. To assign a parsed block
-    * to more than only the placeholder you specify in this function you have
-    * to use a combination of get() and setVariable().
+    * This means that a new block will be integrated into the template in
+    * place of a variable placeholder. The variable placeholder will be 
+    * removed and the new block will behave in the same way as if it was 
+    * inside the original template.
     *
     * The block content must not start with <!-- BEGIN blockname --> and end with
-    * <!-- END blockname --> this would cause overhead and produce an error.
+    * <!-- END blockname -->, if it does the error will be thrown.
     * 
     * @param    string    name of the variable placeholder, the name must be unique within the template.
     * @param    string    name of the block to be added
@@ -885,7 +900,7 @@ class HTML_Template_Sigma extends PEAR
     * @param      string    template file that contains the block
     * @return     mixed     SIGMA_OK on success, error object on failure
     * @throws     PEAR_Error
-    * @brother    addBlock()
+    * @see        addBlock()
     * @access     public
     */
     function addBlockfile($placeholder, $block, $filename)
@@ -909,15 +924,16 @@ class HTML_Template_Sigma extends PEAR
    /**
     * Replaces an existing block with new content.
     * 
-    * This function will replace a block of the template and all blocks contained in
-    * the replaced block and add a new block insted, means you can dynamically change your
-    * template.
+    * This function will replace a block of the template and all blocks 
+    * contained in it and add a new block instead. This means you can 
+    * dynamically change your template.
     * 
-    * In contrast to other systems Sigma analyses the way you've nested blocks and knows
-    * which block belongs into another block. The nesting information helps to make the API
-    * short and simple. Replacing blocks does not only mean that Sigma has to update
-    * the nesting information (relatively time consumpting task) but you have to
-    * make sure that you do not get confused due to the template change itself.
+    * Sigma analyses the way you've nested blocks and knows which block 
+    * belongs into another block. This nesting information helps to make the 
+    * API short and simple. Replacing blocks does not only mean that Sigma 
+    * has to update the nesting information (relatively time consuming task) 
+    * but you have to make sure that you do not get confused due to the 
+    * template change yourself.
     * 
     * @param   string    name of a block to replace
     * @param   string    new content
@@ -949,13 +965,13 @@ class HTML_Template_Sigma extends PEAR
    /**
     * Replaces an existing block with new content from a file.
     * 
+    * @access     public
     * @param      string    name of a block to replace
     * @param      string    template file that contains the block
     * @param      boolean   true if the parsed contents of the block should be kept
-    * @access     public
-    * @brother    replaceBlock()
     * @return     mixed     SIGMA_OK on success, error object on failure
     * @throws     PEAR_Error
+    * @see        replaceBlock(), addBlockfile()
     */
     function replaceBlockfile($block, $filename, $keepContent = false)
     {
@@ -983,7 +999,7 @@ class HTML_Template_Sigma extends PEAR
     * Checks if the block exists in the template
     *
     * @param  string  block name
-    * @return bool    yes/no
+    * @return bool
     * @access public
     */
     function blockExists($block)
@@ -1021,38 +1037,37 @@ class HTML_Template_Sigma extends PEAR
    /**
     * Sets a callback function.
     *
-    * Sigma templates can contain simple function calls.
-    * "function call" means that the editor of the template can add
-    * special placeholder to the template like 'func_h1("embedded in h1")'.
-    * Sigma will grab this function calls and allow you to define a callback
-    * function for them.
+    * Sigma templates can contain simple function calls. This means that the 
+    * author of the template can add a special placeholder to it: 
+    * func_h1("embedded in h1")
+    * Sigma will parse the template for these placeholders and will allow 
+    * you to define a callback function for them. Callback will be called 
+    * automatically when the block containing such function call is parse()'d.
     *
-    * This is an absolutely evil feature. If your application makes heavy
-    * use of such callbacks and you're even implementing if-then etc. on
-    * the level of a template engine you're reiventing the wheel... - that's
-    * actually how PHP came into life. Anyway, sometimes it's handy.
-    *
-    * Consider also using XML/XSLT or native PHP.
+    * Please note that arguments to these template functions can contain 
+    * variable placeholders: func_translate('Hello, {username}'), but not 
+    * blocks or other function calls.
+    * 
+    * This should NOT be used to add logic (except some presentation one) to
+    * the template. If you use a lot of such callbacks and implement business
+    * logic through them, then you're reinventing the wheel. Consider using
+    * XML/XSLT, native PHP or some other template engine.
     *
     * <?php
-    * ...
-    * function h_one($args) {
-    *    return sprintf('<h1>%s</h1>', $args[0]);
+    * function h_one($arg) {
+    *    return '<h1>' . $arg . '</h1>';
     * }
-    *
     * ...
     * $tpl = new HTML_Template_Sigma( ... );
     * ...
     * $tpl->setCallbackFunction('h1', 'h_one');
-    * $tpl->performCallback();
     * ?>
     *
     * template:
     * func_h1('H1 Headline');
     *
     * @param    string    Function name in the template
-    * @param    string    Name of the callback function
-    * @param    string    Name of the callback object
+    * @param    mixed     A callback: anything that can be passed to call_user_func_array()
     * @return   mixed     SIGMA_OK on success, error object on failure
     * @throws   PEAR_Error
     * @access   public
@@ -1079,6 +1094,7 @@ class HTML_Template_Sigma extends PEAR
     * 
     * @param    string    filename
     * @return   string    file content (or error object)
+    * @access   private
     */    
     function _getFile($filename)
     {
@@ -1092,9 +1108,13 @@ class HTML_Template_Sigma extends PEAR
 
 
    /**
-    * Recursively builds a list of all variables within a block
+    * Recursively builds a list of all variables within a block.
+    *
+    * Also calls _buildFunctionlist() for each block it visits
     * 
-    * @param string block name
+    * @param    string block name
+    * @see      _buildFunctionlist()
+    * @access   private
     */
     function _buildBlockVariables($block = '__global__')
     {
@@ -1121,6 +1141,7 @@ class HTML_Template_Sigma extends PEAR
     * @see      $_blocks
     * @throws   PEAR_Error
     * @return   mixed     array of block names on success or error object on failure
+    * @access   private
     */
     function _buildBlocks($string)
     {
@@ -1156,7 +1177,8 @@ class HTML_Template_Sigma extends PEAR
     * @access   private
     * @param    boolean     remove unknown/unused variables?
     * @param    boolean     remove empty blocks?
-    * @see setTemplate(), loadTemplateFile()
+    * @see      setTemplate(), loadTemplateFile()
+    * @access   private
     */
     function _resetTemplate($removeUnknownVariables = true, $removeEmptyBlocks = true)
     {
@@ -1174,13 +1196,14 @@ class HTML_Template_Sigma extends PEAR
 
 
    /**
-    * Checks whether we have a "prepared" template cached
+    * Checks whether we have a "prepared" template cached.
     * 
     * If we do not do caching, always returns false
     * 
     * @access private
-    * @param  $filename source filename
+    * @param  string source filename
     * @return bool yes/no
+    * @see loadTemplatefile(), addBlockfile(), replaceBlockfile()
     */
     function _isCached($filename)
     {
@@ -1207,6 +1230,7 @@ class HTML_Template_Sigma extends PEAR
     * @param    string  block name
     * @param    string  variable placeholder to replace by a block
     * @return   mixed   SIGMA_OK on success, error object on failure
+    * @see loadTemplatefile(), addBlockfile(), replaceBlockfile()
     */
     function _getCached($filename, $block = '__global__', $placeholder = '')
     {
@@ -1274,11 +1298,14 @@ class HTML_Template_Sigma extends PEAR
 
 
    /**
-    * Writes a prepared template to disk
+    * Writes a prepared template file.
+    * 
+    * Even if NO caching is going on, this method has a side effect: it calls 
+    * the _pullTriggers() method and thus loads all files added via <!-- INCLUDE -->
     *
     * @access private
     * @param string   source filename, relative to root directory
-    * @param string   name of the block to save
+    * @param string   name of the block to save into file
     * @return mixed   SIGMA_OK on success, error object on failure
     */
     function _writeCache($filename, $block)
@@ -1320,11 +1347,11 @@ class HTML_Template_Sigma extends PEAR
 
 
    /**
-    * Readies the prepared template for saving
+    * Builds an array of template data to be saved in prepared template file
     *
     * @access private
-    * @param array   prepared template
-    * @param string  block to add
+    * @param array   template data
+    * @param string  block to add to the array
     */
     function _buildCache(&$cache, $block)
     {
@@ -1357,6 +1384,7 @@ class HTML_Template_Sigma extends PEAR
     * @param    boolean   true if the parsed contents of the block should be kept
     * @return   mixed     SIGMA_OK on success, error object on failure
     * @see      replaceBlock(), replaceBlockfile()
+    * @access   private
     */
     function _removeBlockData($block, $keepContent = false)
     {
@@ -1386,6 +1414,8 @@ class HTML_Template_Sigma extends PEAR
     *
     * @param    string    variable name
     * @return    array    block names
+    * @see addBlock(), addBlockfile(), placeholderExists()
+    * @access   private
     */
     function _findParentBlocks($variable)
     {
@@ -1400,13 +1430,14 @@ class HTML_Template_Sigma extends PEAR
 
 
    /**
-    * Replaces a variable placeholder by a block placeholder
+    * Replaces a variable placeholder by a block placeholder.
     * 
     * Of course, it also updates the necessary arrays
     * 
     * @param    string  name of the block containing the placeholder
     * @param    string  variable name
     * @param    string  block name
+    * @access   private
     */
     function _replacePlaceholder($parent, $placeholder, $block)
     {
@@ -1420,7 +1451,7 @@ class HTML_Template_Sigma extends PEAR
 
 
    /**
-    * Generates a placeholder to replace an <!-- INCLUDE --> statement
+    * Generates a placeholder to replace an <!-- INCLUDE filename --> statement
     * 
     * @access   private
     * @param    string  filename
@@ -1438,9 +1469,10 @@ class HTML_Template_Sigma extends PEAR
    /**
     * Replaces the "trigger" placeholders by the matching file contents.
     * 
-    * @see addBlockfile()
+    * @see _makeTrigger(), addBlockfile()
     * @param    array   array ('trigger placeholder' => 'filename')
     * @return   mixed   SIGMA_OK on success, error object on failure
+    * @access   private
     */
     function _pullTriggers($triggers)
     {
@@ -1473,10 +1505,11 @@ class HTML_Template_Sigma extends PEAR
 
 
    /**
-    * Builds a list of functions from the template
+    * Builds a list of functions in a block.
     *
-    * @param    string  template
-    * @return   string  template with function calls replaced by placeholders
+    * @access   private
+    * @param    string  Block name
+    * @see _buildBlockVariables()
     */
     function _buildFunctionlist($block)
     {
@@ -1512,7 +1545,7 @@ class HTML_Template_Sigma extends PEAR
 
 
    /**
-    * Returns a part of string up to a delimiter
+    * Returns a part of string up to a delimiter.
     * 
     * It should handle strings enclosed in single and double quotes, 
     * thus the need for a non-trivial function
@@ -1520,6 +1553,7 @@ class HTML_Template_Sigma extends PEAR
     * @param    string  a string from which to extract
     * @param    mixed   a delimiter or an array of ('delimiter' => true)
     * @return   string  an extracted string
+    * @access   private
     */
     function _getToken($code, $delimiter)
     {
@@ -1553,8 +1587,11 @@ class HTML_Template_Sigma extends PEAR
 
 
    /**
-    * Replaces an opening delimiter by a special string
+    * Replaces an opening delimiter by a special string.
     * 
+    * Used to implement $_options['preserve_data'] logic
+    * 
+    * @access   private
     * @param string
     * @return string
     */
@@ -1567,13 +1604,14 @@ class HTML_Template_Sigma extends PEAR
 
 
    /**
-    * Checks for callback function existance
+    * Checks whether a callback function exists.
     * 
-    * Borrowed from HTML_QuickForm, only accepts static methods as well
+    * Borrowed from HTML_QuickForm, this version manages static methods as well
     *
-    * @param  mixed     a callback, like one used by call_user_func()
+    * @param  mixed     a callback, like one used by call_user_func_array()
     * @access private
     * @return bool
+    * @see setCallbackfunction()
     */
     function _callbackExists($callback)
     {
