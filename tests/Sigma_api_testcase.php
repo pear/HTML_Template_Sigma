@@ -1,9 +1,12 @@
 <?php
 
-function _uppercaseCallback($ary)
-{
-    return strtoupper($ary[0]);
-}
+/**
+ * Unit tests for HTML_Template_Sigma package.
+ * 
+ * @author Alexey Borzov <avb@php.net>
+ * 
+ * $Id$
+ */
 
 class Sigma_api_TestCase extends PHPUnit_TestCase
 {
@@ -102,9 +105,6 @@ class Sigma_api_TestCase extends PHPUnit_TestCase
         $this->assertEquals('Master file; Included file', trim($this->tpl->get()));
     }
 
-   /**
-    *
-    */
     function testCurrentBlock()
     {
         $result = $this->tpl->loadTemplateFile('blockiteration.html', true, true);
@@ -120,9 +120,6 @@ class Sigma_api_TestCase extends PHPUnit_TestCase
         $this->assertEquals('a|1|2|3|4|5#', $this->_stripWhitespace($this->tpl->get()));
     }
 
-   /**
-    *
-    */
     function testRemovePlaceholders()
     {
         $result = $this->tpl->setTemplate('{placeholder1},{placeholder2},{placeholder3}', true, true);
@@ -136,9 +133,7 @@ class Sigma_api_TestCase extends PHPUnit_TestCase
         ));
         $this->assertEquals('var1,var2,', $this->tpl->get());
 
-        // Now, we should really add a switch for keeping {stuff} in
-        // data supplied to setVariable() safe. Until then, removing it should
-        // be expected behaviour
+        // Default behaviour is to remove {stuff} from data as well
         $result = $this->tpl->setTemplate('{placeholder1},{placeholder2},{placeholder3}', true, true);
         if (PEAR::isError($result)) {
             $this->assertTrue(false, 'Error setting template: '. $result->getMessage());
@@ -151,9 +146,6 @@ class Sigma_api_TestCase extends PHPUnit_TestCase
         $this->assertEquals('var1,var2,var3', $this->tpl->get());
     }
 
-   /**
-    *
-    */
     function testTouchBlock()
     {
         $result = $this->tpl->loadTemplateFile('blockiteration.html', false, true);
@@ -166,11 +158,6 @@ class Sigma_api_TestCase extends PHPUnit_TestCase
         $this->assertEquals('data|{inner}#', $this->_stripWhitespace($this->tpl->get()));
     }
    
-    // Not available in stock class
-
-   /**
-    *
-    */
     function testHideBlock()
     {
         if (!$this->_methodExists('hideBlock')) {
@@ -189,9 +176,6 @@ class Sigma_api_TestCase extends PHPUnit_TestCase
         $this->assertEquals('data#', $this->_stripWhitespace($this->tpl->get()));
     }
 
-   /**
-    *
-    */
     function testSetGlobalVariable()
     {
         if (!$this->_methodExists('setGlobalVariable')) {
@@ -212,17 +196,6 @@ class Sigma_api_TestCase extends PHPUnit_TestCase
             $this->tpl->parse('block_four');
         } // for
         $this->assertEquals('glob:one#glob:three|glob:1|glob:2|glob:3#', $this->_stripWhitespace($this->tpl->get()));
-    }
-
-    function testOptionUsePreg()
-    {
-        if (!$this->_methodExists('setOption')) {
-            return;
-        }
-        $this->tpl->setTemplate('{var}', true, true);
-        $this->tpl->setOption('use_preg', true);
-        $this->tpl->setVariable('var', 'All templates for $1 or \\$2!');
-        $this->assertEquals('All templates for  or $2!', $this->tpl->get());
     }
 
     function testOptionPreserveData()
@@ -336,13 +309,20 @@ class Sigma_api_TestCase extends PHPUnit_TestCase
 
     function testCallback()
     {
-        $this->tpl->setTemplate('callback:func_uppercase(word)');
-        $this->tpl->setCallbackFunction('uppercase', '_uppercaseCallback');
-        $res = $this->tpl->performCallback();
-        if (PEAR::isError($res)) {
-            $this->assertTrue(false, 'Error performing callback: '. $res->getMessage());
+        $result = $this->tpl->loadTemplatefile('callback.html', true, true);
+        if (PEAR::isError($result)) {
+            $this->assertTrue(false, 'Error loading template file: '. $result->getMessage());
         }
-        $this->assertEquals('callback:WORD', $this->tpl->get());
+        $this->tpl->setVariable('var', 'value');
+        $this->tpl->setCallbackFunction('uppercase', 'strtoupper');
+        $this->tpl->setCallbackFunction('lowercase', 'strtolower');
+        $this->tpl->setCallBackFunction('noarg', array(&$this, '_doCallback'));
+        $this->assertEquals('callback#word#VALUE', $this->_stripWhitespace($this->tpl->get()));
+    }
+
+    function _doCallback()
+    {
+        return 'callback';
     }
 }
 

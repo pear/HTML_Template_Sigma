@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * Unit tests for HTML_Template_Sigma package.
+ * 
+ * @author Alexey Borzov <avb@php.net>
+ * 
+ * $Id$
+ */
+
 require_once 'Sigma_api_testcase.php';
 
 class Sigma_cache_TestCase extends Sigma_api_TestCase
@@ -85,6 +93,17 @@ class Sigma_cache_TestCase extends Sigma_api_TestCase
         parent::testInclude();
         $this->assertCacheExists(array('include.html', '__include.html'));
         parent::testInclude();
+    }
+
+    function testCallback()
+    {
+        if (!$this->_methodExists('_isCached')) {
+            return;
+        }
+        $this->_removeCachedFiles('callback.html');
+        parent::testCallback();
+        $this->assertCacheExists('callback.html');
+        parent::testCallback();
     }
 }
 ?>

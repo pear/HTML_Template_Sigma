@@ -1,9 +1,17 @@
 <?php
 
+/**
+ * Unit tests for HTML_Template_Sigma package.
+ * 
+ * @author Alexey Borzov <avb@php.net>
+ * 
+ * $Id$
+ */
+
 class Sigma_Usage_TestCase extends PHPUnit_TestCase
 {
    /**
-    * An HTML_Template_IT object
+    * A template object
     * @var object
     */
     var $tpl;
@@ -92,8 +100,6 @@ class Sigma_Usage_TestCase extends PHPUnit_TestCase
         }
         $this->assertEquals('a|#b#c|#d#e|#', $this->_stripWhitespace($this->tpl->get()));
     }
-
-    // Not available in stock version
 
    /**
     *
