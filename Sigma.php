@@ -33,6 +33,7 @@ define('SIGMA_PLACEHOLDER_NOT_FOUND',     -10);
 define('SIGMA_PLACEHOLDER_DUPLICATE',     -11);
 define('SIGMA_BLOCK_EXISTS',              -12);
 define('SIGMA_INVALID_CALLBACK',          -13);
+define('SIGMA_CALLBACK_SYNTAX_ERROR',     -14);
 
 /**
 * HTML_Template_Sigma: implementation of Integrated Templates API with 
@@ -466,7 +467,8 @@ class HTML_Template_Sigma extends PEAR
                 SIGMA_PLACEHOLDER_NOT_FOUND => 'Variable placeholder \'%s\' not found',
                 SIGMA_PLACEHOLDER_DUPLICATE => 'Placeholder \'%s\' should be unique, found in multiple blocks',
                 SIGMA_BLOCK_EXISTS          => 'Block \'%s\' already exists',
-                SIGMA_INVALID_CALLBACK      => 'Callback does not exist'
+                SIGMA_INVALID_CALLBACK      => 'Callback does not exist',
+                SIGMA_CALLBACK_SYNTAX_ERROR => 'Cannot parse template function: %s'
             );
         }
 
@@ -816,8 +818,7 @@ class HTML_Template_Sigma extends PEAR
         if (PEAR::isError($list)) {
             return $list;
         }
-        $this->_buildBlockVariables();
-        return SIGMA_OK;
+        return $this->_buildBlockVariables();
     }
 
 
@@ -893,8 +894,7 @@ class HTML_Template_Sigma extends PEAR
             return $list;
         }
         $this->_replacePlaceholder($parents[0], $placeholder, $block);
-        $this->_buildBlockVariables($block);
-        return SIGMA_OK;
+        return $this->_buildBlockVariables($block);
     }
     
 
@@ -964,8 +964,7 @@ class HTML_Template_Sigma extends PEAR
             return $list;
         }
         // renew the variables list
-        $this->_buildBlockVariables($block);
-        return SIGMA_OK;
+        return $this->_buildBlockVariables($block);
     }
 
 
@@ -1223,12 +1222,17 @@ class HTML_Template_Sigma extends PEAR
                 $this->_functions[$block][$funcId] = $funcData;
             }
         }
-        $this->_buildFunctionlist($block);
+        if (SIGMA_OK != ($res = $this->_buildFunctionlist($block))) {
+            return $res;
+        }
         if (isset($this->_children[$block]) && is_array($this->_children[$block])) {
             foreach ($this->_children[$block] as $child => $v) {
-                $this->_buildBlockVariables($child);
+                if (SIGMA_OK != ($res = $this->_buildBlockVariables($child))) {
+                    return $res;
+                }
             }
         }
+        return SIGMA_OK;
     }
 
 
@@ -1623,76 +1627,120 @@ class HTML_Template_Sigma extends PEAR
     function _buildFunctionlist($block)
     {
         $template = $this->_blocks[$block];
+        $this->_blocks[$block] = '';
 
         while (preg_match($this->functionRegExp, $template, $regs)) {
-
+            $this->_blocks[$block] .= substr($template, 0, strpos($template, $regs[0]));
             $template = substr($template, strpos($template, $regs[0]) + strlen($regs[0]));
-            $head     = $this->_getToken($template, ')');
-            $funcText = $regs[0] . $head . ')';
+
+            $state = 1;
             $funcData = array(
                 'name' => $regs[1],
                 'args' => array()
             );
-            // build function arguments
-            while (('' != $head) && ('' != trim($arg = $this->_getToken($head, ',')))) {
-                $arg2 = trim($arg);
-                $funcData['args'][] = ('"' == $arg2{0} || "'" == $arg2{0}) ? substr($arg2, 1, -1) : $arg2;
-                if ($arg == $head) {
-                    break;
-                }
-                $head = substr($head, strlen($arg) + 1);
-            }
-            $funcId   = substr(md5(serialize($funcData)), 0, 10);
-            $template = str_replace($funcText, '{__function_' . $funcId . '__}', $template);
+            for ($i = 0, $len = strlen($template); $i < $len; $i++) {
+                $char = $template{$i};
+                switch ($state) {
+                    case 0:
+                    case -1:
+                        break 2;
 
-            // update block info
-            $this->_blocks[$block] = str_replace($funcText, '{__function_' . $funcId . '__}', $this->_blocks[$block]);
-            $this->_blockVariables[$block]['__function_' . $funcId . '__'] = true;
-            $this->_functions[$block][$funcId] = $funcData;
-        }
+                    case 1:
+                        $arg = '';
+                        if (')' == $char) {
+                            $state = 0;
+                        } elseif (',' == $char) {
+                            $error = 'Unexpected \',\'';
+                            $state = -1;
+                        } elseif ('\'' == $char || '"' == $char) {
+                            $quote = $char;
+                            $state = 5;
+                        } elseif (!ctype_space($char)) {
+                            $arg  .= $char;
+                            $state = 3;
+                        }
+                        break;
+
+                    case 2: 
+                        $arg = '';
+                        if (',' == $char || ')' == $char) {
+                            $error = 'Unexpected \'' . $char . '\'';
+                            $state = -1;
+                        } elseif ('\'' == $char || '"' == $char) {
+                            $quote = $char;
+                            $state = 5;
+                        } elseif (!ctype_space($char)) {
+                            $arg  .= $char;
+                            $state = 3;
+                        }
+                        break;
+
+                    case 3: 
+                        if (')' == $char) {
+                            $funcData['args'][] = rtrim($arg);
+                            $state  = 0;
+                        } elseif (',' == $char) {
+                            $funcData['args'][] = rtrim($arg);
+                            $state = 2;
+                        } elseif ('\'' == $char || '"' == $char) {
+                            $quote = $char;
+                            $arg  .= $char;
+                            $state = 4;
+                        } else {
+                            $arg  .= $char;
+                        }
+                        break;
+
+                    case 4:
+                        $arg .= $char;
+                        if ($quote == $char) {
+                            $state = 3;
+                        }
+                        break;
+
+                    case 5:
+                        if ('\\' == $char) {
+                            $state = 6;
+                        } elseif ($quote == $char) {
+                            $state = 7;
+                        } else {
+                            $arg .= $char;
+                        }
+                        break;
+
+                    case 6;
+                        $arg  .= $char;
+                        $state = 5;
+                        break;
+
+                    case 7:
+                        if (')' == $char) {
+                            $funcData['args'][] = $arg;
+                            $state  = 0;
+                        } elseif (',' == $char) {
+                            $funcData['args'][] = $arg;
+                            $state  = 2;
+                        } elseif (!ctype_space($char)) {
+                            $error = 'Unexpected \'' . $char . '\' (expected: \')\' or \',\')';
+                            $state = -1;
+                        }
+                        break;
+                } // switch
+            } // for
+            if (0 != $state) {
+                return $this->raiseError($this->errorMessage(SIGMA_CALLBACK_SYNTAX_ERROR, (empty($error)? 'Unexpected end of input': $error) . ' in ' . $regs[0] . substr($template, 0, $i)), SIGMA_CALLBACK_SYNTAX_ERROR);
+            } else {
+                $funcId   = substr(md5(serialize($funcData)), 0, 10);
+                $template = substr($template, $i);
+
+                $this->_blocks[$block] .= '{__function_' . $funcId . '__}';
+                $this->_blockVariables[$block]['__function_' . $funcId . '__'] = true;
+                $this->_functions[$block][$funcId] = $funcData;
+            }
+        } // while 
+        $this->_blocks[$block] .= $template;
+        return SIGMA_OK;
     } // end func _buildFunctionlist
-
-
-   /**
-    * Returns a part of string up to a delimiter.
-    * 
-    * It should handle strings enclosed in single and double quotes, 
-    * thus the need for a non-trivial function
-    * 
-    * @param    string  a string from which to extract
-    * @param    mixed   a delimiter or an array of ('delimiter' => true)
-    * @return   string  an extracted string
-    * @access   private
-    */
-    function _getToken($code, $delimiter)
-    {
-        if (!is_array($delimiter)) {
-            $delimiter = array( $delimiter => true );
-        }
-        if ('' == $code || isset($delimiter[$code{0}])) {
-            return '';
-        }
-
-        $len         = strlen($code);
-        $enclosed    = false;
-        $enclosed_by = '';
-
-        for ($i = 0; $i < $len; $i++) {
-            $char = $code{$i};
-
-            if (('"' == $char || "'" == $char) && 
-                ($char == $enclosed_by || '' == $enclosed_by) && 
-                (0 == $i || ($i > 0 && '\\' != $code{$i - 1}))) 
-            {
-                $enclosed_by = $enclosed? '': $char;
-                $enclosed    = !$enclosed;
-            }
-            if (!$enclosed && isset($delimiter[$char])) {
-                break;
-            }
-        }
-        return substr($code, 0, $i);
-    } // end func _getToken
 
 
    /**

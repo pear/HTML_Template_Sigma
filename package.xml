@@ -26,12 +26,17 @@ Features:
     </maintainer>
   </maintainers>
   <release>
-    <version>1.1.1</version>
+    <version>1.1.2</version>
+    <date>2004-10-20</date>
+    <license>PHP License</license>
     <state>stable</state>
-    <date>2004-05-31</date>
     <notes>
-Callbacks are not called if the block containing them is empty. Thanks
-to Sergey Vasiliev for the suggestion.
+Changed the code for parsing template function arguments. It will
+now correctly unescape the escaped quotes within quoted arguments
+(see bug #1840).
+The new code throws errors on bogus arguments. If you previously
+relied on undocumented behaviour of argument parsing method, your 
+code may break: test before upgrading.
     </notes>
     <filelist>
       <dir name="/" baseinstalldir="HTML/Template">
@@ -72,12 +77,26 @@ to Sergey Vasiliev for the suggestion.
         </dir>
       </dir>
     </filelist>
+    <deps>
+      <dep type="ext" rel="has">ctype</dep>
+    </deps>
   </release>
   <changelog>
     <release>
-      <version>1.1.0</version>
+      <version>1.1.1</version>
+      <date>2004-05-31</date>
+      <license>PHP License</license>
       <state>stable</state>
+      <notes>
+Callbacks are not called if the block containing them is empty. Thanks
+to Sergey Vasiliev for the suggestion.
+      </notes>
+    </release>
+    <release>
+      <version>1.1.0</version>
       <date>2004-04-14</date>
+      <license>PHP License</license>
+      <state>stable</state>
       <notes>
 * Fixed #876 (get_class() and get_class_methods() usage with PHP5)
   Unit tests run on PHP5, all tests pass.
@@ -94,8 +113,9 @@ This release is dedicated to Lukas Smith
     </release>
     <release>
       <version>1.0.2</version>
-      <state>stable</state>
       <date>2003-10-02</date>
+      <license>PHP License</license>
+      <state>stable</state>
       <notes>
 * Removed _callbackExists() method, is_callable() is used instead
 * Check for SIGMA_OK instead of PEAR::isError() where possible
@@ -104,8 +124,9 @@ This release is dedicated to Lukas Smith
     </release>
     <release>
       <version>1.0.1</version>
-      <state>stable</state>
       <date>2003-05-20</date>
+      <license>PHP License</license>
+      <state>stable</state>
       <notes>
 * Added getBlockList() and getPlaceholderList() methods (thanks to Markus Wolff for the idea).
 * HTML_Template_IT compatibility: get() does not clear the parsed block contents by default.
@@ -114,8 +135,9 @@ This release is dedicated to Lukas Smith
     </release>
   	<release>
       <version>1.0</version>
-      <state>stable</state>
       <date>2003-04-28</date>
+      <license>PHP License</license>
+      <state>stable</state>
       <notes>
 This release has Sigma's template functions/callbacks infrastructure significantly enhanced.
 This unfortunately means some backwards compatibility breaks. If you were using callbacks before, please carefully examine the release notes and test you scripts before upgrading to 1.0.
@@ -139,8 +161,9 @@ Other changes:
   	</release>
     <release>
       <version>0.9.2</version>
-      <state>stable</state>
       <date>2003-04-21</date>
+      <license>PHP License</license>
+      <state>stable</state>
       <notes>
 * Added usage examples
 * Added the cache FAQ
@@ -151,8 +174,9 @@ Other changes:
     </release>
     <release>
       <version>0.9.1</version>
-      <state>stable</state>
       <date>2003-04-18</date>
+      <license>PHP License</license>
+      <state>stable</state>
       <notes>
 * Fix: if source template does not exist, do not load the 'prepared' one, throw an error instead.
   Thanks to Maxim Panasiuk for the report.
@@ -160,8 +184,9 @@ Other changes:
     </release>
     <release>
       <version>0.9</version>
-      <state>stable</state>
       <date>2003-04-04</date>
+      <license>PHP License</license>
+      <state>stable</state>
       <notes>Initial PEAR release</notes>
     </release>
   </changelog>
