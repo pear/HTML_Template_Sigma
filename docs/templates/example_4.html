@@ -39,5 +39,22 @@
 </ul>
 <!-- END i18n_block -->
 
+<h2>3. Shorthand for callbacks, built-in callbacks</h2>
+<p>A common problem is to output the same variable, but encoded/processed in different ways. The shorthand &#x7b;var:callback&#x7d; for callback functions and default callbacks 'h', 'u' and 'j' were added specifically to address this.</p>
+<script type="text/javascript">
+function showMessage()
+{
+    alert("The message is: {escaped:j}");
+}
+</script>
+<form>
+<ul>
+    <li>For output in HTML: {escaped:h}</li>
+    <li>For output in URLs: <a href="?escaped={escaped:u}">a link</a></li>
+    <li>For javascript: <input type="button" value="click me" onclick="showMessage();"></li>
+    <li>Use a custom callback: {escaped:letters}</li>
+</ul>
+</form>
+
 </body>
 </html>

@@ -25,6 +25,11 @@ function translate($str)
     return isset($aryI18n[$lang][$str])? $aryI18n[$lang][$str]: $str;
 }
 
+function letters($str)
+{
+    return preg_replace('/[^\\w\\s]/', '', $str);
+}
+
 $ary = array(
     array('code' => 'SIGMA_OK', 'message' => '&nbsp;', 'reason' => 'Everything went OK', 'solution' => '&nbsp;'),
     array('code' => 'SIGMA_BLOCK_NOT_FOUND', 'message' => 'Cannot find block <i>\'blockname\'</i>', 'reason' => 'Tried to access block that does not exist', 'solution' => 'Either add the block or fix the block name'),
@@ -86,6 +91,12 @@ foreach (array_keys($aryI18n) as $lang) {
     ));
     $tpl->parse('i18n_block');
 }
+
+// 3. Shorthand for callbacks, built-in callbacks
+// We add a variable that cannot be safely displayed either in HTML,
+// in URLs or inside JavaScript string constants without appropriate encoding
+$tpl->setVariable('escaped', '"Foo & Bar"');
+$tpl->setCallbackFunction('letters', 'letters');
 
 // output the results
 $tpl->show();
