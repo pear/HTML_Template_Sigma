@@ -609,12 +609,13 @@ class HTML_Template_Sigma extends PEAR
                     $placeholder = $this->openingDelimiter . '__function_' . $id . '__' . $this->closingDelimiter;
                     // do not waste time calling function more than once
                     if (!isset($vars[$placeholder])) {
-                        $args = array();
+                        $args         = array();
+                        $preserveArgs = isset($this->_callback[$data['name']]['preserveArgs']) && $this->_callback[$data['name']]['preserveArgs'];
                         foreach ($data['args'] as $arg) {
-                            $args[] = empty($varKeys)? $arg: str_replace($varKeys, $varValues, $arg);
+                            $args[] = (empty($varKeys) || $preserveArgs)? $arg: str_replace($varKeys, $varValues, $arg);
                         }
-                        if (isset($this->_callback[$data['name']])) {
-                            $res = call_user_func_array($this->_callback[$data['name']], $args);
+                        if (isset($this->_callback[$data['name']]['data'])) {
+                            $res = call_user_func_array($this->_callback[$data['name']]['data'], $args);
                         } else {
                             $res = isset($args[0])? $args[0]: '';
                         }
@@ -1068,16 +1069,20 @@ class HTML_Template_Sigma extends PEAR
     *
     * @param    string    Function name in the template
     * @param    mixed     A callback: anything that can be passed to call_user_func_array()
+    * @param    bool      If true, then no variable substitution in arguments will take place before function call
     * @return   mixed     SIGMA_OK on success, error object on failure
     * @throws   PEAR_Error
     * @access   public
     */
-    function setCallbackFunction($tplFunction, $callback)
+    function setCallbackFunction($tplFunction, $callback, $preserveArgs = false)
     {
         if (!$this->_callbackExists($callback)) {
             return $this->raiseError($this->errorMessage(SIGMA_INVALID_CALLBACK), SIGMA_INVALID_CALLBACK);
         }
-        $this->_callback[$tplFunction] = $callback;
+        $this->_callback[$tplFunction] = array(
+            'data'         => $callback,
+            'preserveArgs' => $preserveArgs
+        );
         return SIGMA_OK;
     } // end func setCallbackFunction
 
@@ -1234,6 +1239,18 @@ class HTML_Template_Sigma extends PEAR
     */
     function _getCached($filename, $block = '__global__', $placeholder = '')
     {
+        // the same checks are done in addBlock()
+        if (!empty($placeholder)) {
+            if (isset($this->_blocks[$block])) {
+                return $this->raiseError($this->errorMessage(SIGMA_BLOCK_EXISTS, $block), SIGMA_BLOCK_EXISTS);
+            }
+            $parents = $this->_findParentBlocks($placeholder);
+            if (0 == count($parents)) {
+                return $this->raiseError($this->errorMessage(SIGMA_PLACEHOLDER_NOT_FOUND, $placeholder), SIGMA_PLACEHOLDER_NOT_FOUND);
+            } elseif (count($parents) > 1) {
+                return $this->raiseError($this->errorMessage(SIGMA_PLACEHOLDER_DUPLICATE, $placeholder), SIGMA_PLACEHOLDER_DUPLICATE);
+            }
+        }
         $content = $this->_getFile($this->_cachedName($filename));
         if (PEAR::isError($content)) {
             return $content;
@@ -1253,7 +1270,6 @@ class HTML_Template_Sigma extends PEAR
 
         // the same thing gets done in addBlockfile()
         if (!empty($placeholder)) {
-            $parents = $this->_findParentBlocks($placeholder);
             $this->_replacePlaceholder($parents[0], $placeholder, $block);
         }
         // pull the triggers, if any
@@ -1520,26 +1536,27 @@ class HTML_Template_Sigma extends PEAR
 
             $template = substr($template, strpos($template, $regs[0]) + strlen($regs[0]));
             $head     = $this->_getToken($template, ')');
-            $args     = array();
-            $funcId   = substr(md5($regs[0] . $head . ')'), 0, 10);
-            $template = str_replace($regs[0] . $head . ')', '{__function_' . $funcId . '__}', $template);
-
-            // update block info
-            $this->_blocks[$block] = str_replace($regs[0] . $head . ')', '{__function_' . $funcId . '__}', $this->_blocks[$block]);
-            $this->_blockVariables[$block]['__function_' . $funcId . '__'] = true;
-
-            while ('' != $head && $arg2 = trim($this->_getToken($head, ','))) {
-                $args[] = ('"' == $arg2{0} || "'" == $arg2{0}) ? substr($arg2, 1, -1) : $arg2;
-                if ($arg2 == $head) {
+            $funcText = $regs[0] . $head . ')';
+            $funcData = array(
+                'name' => $regs[1],
+                'args' => array()
+            );
+            // build function arguments
+            while (('' != $head) && ('' != trim($arg = $this->_getToken($head, ',')))) {
+                $arg2 = trim($arg);
+                $funcData['args'][] = ('"' == $arg2{0} || "'" == $arg2{0}) ? substr($arg2, 1, -1) : $arg2;
+                if ($arg == $head) {
                     break;
                 }
-                $head = substr($head, strlen($arg2) + 1);
+                $head = substr($head, strlen($arg) + 1);
             }
+            $funcId   = substr(md5(serialize($funcData)), 0, 10);
+            $template = str_replace($funcText, '{__function_' . $funcId . '__}', $template);
 
-            $this->_functions[$block][$funcId] = array(
-                'name'    => $regs[1],
-                'args'    => $args
-            );
+            // update block info
+            $this->_blocks[$block] = str_replace($funcText, '{__function_' . $funcId . '__}', $this->_blocks[$block]);
+            $this->_blockVariables[$block]['__function_' . $funcId . '__'] = true;
+            $this->_functions[$block][$funcId] = $funcData;
         }
     } // end func _buildFunctionlist
 

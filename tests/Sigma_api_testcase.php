@@ -313,16 +313,26 @@ class Sigma_api_TestCase extends PHPUnit_TestCase
         if (PEAR::isError($result)) {
             $this->assertTrue(false, 'Error loading template file: '. $result->getMessage());
         }
-        $this->tpl->setVariable('var', 'value');
+        $this->tpl->setVariable(array(
+            'username' => 'luser',
+            'USERNAME' => 'luser'
+        ));
         $this->tpl->setCallbackFunction('uppercase', 'strtoupper');
+        $this->tpl->setCallbackFunction('russian', array(&$this, '_doRussian'), true);
         $this->tpl->setCallbackFunction('lowercase', 'strtolower');
         $this->tpl->setCallBackFunction('noarg', array(&$this, '_doCallback'));
-        $this->assertEquals('callback#word#VALUE', $this->_stripWhitespace($this->tpl->get()));
+        $this->assertEquals('callback#word#HELLO,LUSER!#Привет,luser!', $this->_stripWhitespace($this->tpl->get()));
     }
 
     function _doCallback()
     {
         return 'callback';
+    }
+
+    function _doRussian($arg)
+    {
+        $ary = array('Hello, {username}!' => 'Привет, {username}!');
+        return isset($ary[$arg])? $ary[$arg]: $arg;
     }
 }
 
