@@ -1187,7 +1187,7 @@ class HTML_Template_Sigma extends PEAR
         if (!($fh = @fopen($filename, 'r'))) {
             return $this->raiseError($this->errorMessage(SIGMA_TPL_NOT_FOUND, $filename), SIGMA_TPL_NOT_FOUND);
         }
-        $content = fread($fh, filesize($filename));
+        $content = fread($fh, max(1, filesize($filename)));
         fclose($fh);
         return $content;
     }
@@ -1217,7 +1217,7 @@ class HTML_Template_Sigma extends PEAR
                 $funcId   = substr(md5(serialize($funcData)), 0, 10);
 
                 // update block info
-                $this->_blocks[$block] = str_replace($match[0], '{__function_' . $funcId . '__}', $this->_blocks[$block]);
+                $this->_blocks[$block] = str_replace($match[0], $this->openingDelimiter . '__function_' . $funcId . '__' . $this->closingDelimiter, $this->_blocks[$block]);
                 $this->_blockVariables[$block]['__function_' . $funcId . '__'] = true;
                 $this->_functions[$block][$funcId] = $funcData;
             }
@@ -1733,7 +1733,7 @@ class HTML_Template_Sigma extends PEAR
                 $funcId   = substr(md5(serialize($funcData)), 0, 10);
                 $template = substr($template, $i);
 
-                $this->_blocks[$block] .= '{__function_' . $funcId . '__}';
+                $this->_blocks[$block] .= $this->openingDelimiter . '__function_' . $funcId . '__' . $this->closingDelimiter;
                 $this->_blockVariables[$block]['__function_' . $funcId . '__'] = true;
                 $this->_functions[$block][$funcId] = $funcData;
             }
