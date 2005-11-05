@@ -1730,7 +1730,7 @@ class HTML_Template_Sigma extends PEAR
             if (0 != $state) {
                 return $this->raiseError($this->errorMessage(SIGMA_CALLBACK_SYNTAX_ERROR, (empty($error)? 'Unexpected end of input': $error) . ' in ' . $regs[0] . substr($template, 0, $i)), SIGMA_CALLBACK_SYNTAX_ERROR);
             } else {
-                $funcId   = substr(md5(serialize($funcData)), 0, 10);
+                $funcId   = 'f' . substr(md5(serialize($funcData)), 0, 10);
                 $template = substr($template, $i);
 
                 $this->_blocks[$block] .= $this->openingDelimiter . '__function_' . $funcId . '__' . $this->closingDelimiter;
