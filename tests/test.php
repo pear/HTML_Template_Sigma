@@ -1,7 +1,7 @@
 <?php
 /**
  * Unit tests for HTML_Template_Sigma class
- * 
+ *
  * $Id$
  */
 
@@ -19,7 +19,8 @@ $IT_class = 'Sigma';
 $testcases = array(
     'Sigma_api_testcase',
     'Sigma_cache_testcase',
-    'Sigma_usage_testcase'
+    'Sigma_usage_testcase',
+    'Sigma_bug_testcase'
 );
 
 if (@file_exists('../' . $IT_class . '.php')) {
