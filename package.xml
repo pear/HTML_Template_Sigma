@@ -28,12 +28,20 @@ Features:
     </maintainer>
   </maintainers>
   <release>
-    <version>1.1.4</version>
-    <date>2005-11-05</date>
+    <version>1.1.5</version>
+    <date>2006-05-31</date>
     <license>PHP License</license>
     <state>stable</state>
     <notes>
-Fixed bug #5168: Prevent problems with template functions in included files
+Fixed bug #6346: typo in _buildFunctionList()
+Fixed bug #6902: correctly handle drive letters and path separators on Windows
+Fixed bug #6905: use 'b' modifier for fopen() to prevent problems with cached templates on Windows
+Calling setCacheRoot() with an empty argument will now disable caching. It was impossible
+to disable it with previous behaviour.
+
+Added possibility to pass arrays as second arguments to setVariable() and setGlobalVariable(),
+this will assign values to placeholders of the form {varName.arrayKey} in the template.
+Thanks to Franz Pentenrieder &lt;franz at quox.net&gt; for idea and original implementation.
     </notes>
     <deps>
       <dep type="ext" rel="has">ctype</dep>
@@ -79,6 +87,15 @@ Fixed bug #5168: Prevent problems with template functions in included files
     </filelist>
   </release>
   <changelog>
+    <release>
+      <version>1.1.4</version>
+      <date>2005-11-05</date>
+      <license>PHP License</license>
+      <state>stable</state>
+      <notes>
+Fixed bug #5168: Prevent problems with template functions in included files
+      </notes>
+    </release>
     <release>
       <version>1.1.3</version>
       <date>2005-08-09</date>
