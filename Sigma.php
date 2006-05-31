@@ -154,7 +154,7 @@ class HTML_Template_Sigma extends PEAR
     * @access   public
     * @see      $blocknameRegExp, $openingDelimiter, $closingDelimiter
     */
-    var $variablenameRegExp = '[0-9A-Za-z_-]+';
+    var $variablenameRegExp = '[0-9A-Za-z._-]+';
 
    /**
     * RegExp used to find variable placeholder, filled by the constructor
@@ -665,6 +665,8 @@ class HTML_Template_Sigma extends PEAR
     {
         if (is_array($variable)) {
             $this->_variables = array_merge($this->_variables, $variable);
+        } elseif (!is_array($variable) && is_array($value)) {
+            $this->_variables = array_merge($this->_variables, $this->_flattenVariables($variable, $value));
         } else {
             $this->_variables[$variable] = $value;
         }
@@ -683,6 +685,8 @@ class HTML_Template_Sigma extends PEAR
     {
         if (is_array($variable)) {
             $this->_globalVariables = array_merge($this->_globalVariables, $variable);
+        } else if (!is_array($variable) && is_array($value)) {
+            $this->_globalVariables = array_merge($this->_globalVariables, $this->_flattenVariables($variable, $value));
         } else {
             $this->_globalVariables[$variable] = $value;
         }
@@ -1174,6 +1178,26 @@ class HTML_Template_Sigma extends PEAR
     //
     //------------------------------------------------------------
 
+    /**
+     * Builds the variable names for nested variables
+     *
+     * @param    string    variable name
+     * @param    array     value array
+     * @return   array     array with 'name.key' keys
+     * @access   private
+     */
+    function _flattenVariables($name, $array)
+    {
+        $ret = array();
+        foreach ($array as $key => $value) {
+            if (is_array($value)) {
+                $ret = array_merge($ret, $this->_flattenVariables($name . '.' . $key, $value));
+            } else {
+                $ret[$name . '.' . $key] = $value;
+            }
+        }
+        return $ret;
+    }
 
    /**
     * Reads the file and returns its content

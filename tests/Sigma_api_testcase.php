@@ -2,9 +2,9 @@
 
 /**
  * Unit tests for HTML_Template_Sigma package.
- * 
+ *
  * @author Alexey Borzov <avb@php.net>
- * 
+ *
  * $Id$
  */
 
@@ -37,7 +37,7 @@ class Sigma_api_TestCase extends PHPUnit_TestCase
         return preg_replace('/\\s+/', '', $str);
     }
 
-    function _methodExists($name) 
+    function _methodExists($name)
     {
         if (in_array(strtolower($name), array_map('strtolower', get_class_methods($this->tpl)))) {
             return true;
@@ -47,7 +47,7 @@ class Sigma_api_TestCase extends PHPUnit_TestCase
     }
 
    /**
-    * Tests a setTemplate method 
+    * Tests a setTemplate method
     *
     */
     function testSetTemplate()
@@ -60,7 +60,7 @@ class Sigma_api_TestCase extends PHPUnit_TestCase
     }
 
    /**
-    * Tests a loadTemplatefile method 
+    * Tests a loadTemplatefile method
     *
     */
     function testLoadTemplatefile()
@@ -93,7 +93,27 @@ class Sigma_api_TestCase extends PHPUnit_TestCase
     }
 
    /**
-    * Tests the <!-- INCLUDE --> functionality 
+    * Tests a setVariable method with array handles
+    *
+    */
+    function testExtendedSetVariale()
+    {
+        $result = $this->tpl->setTemplate('{index1.0} {index1.subindex1} {index1.subindex2.0}', true, true);
+        if (PEAR::isError($result)) {
+            $this->assertTrue(false, 'Error setting template: '. $result->getMessage());
+        }
+        $this->tpl->setVariable('index1', array(
+            'var1',
+            'subindex1' => 'var2',
+            'subindex2' => array(
+                'var3'
+            )
+        ));
+        $this->assertEquals('var1 var2 var3', $this->tpl->get());
+    }
+
+   /**
+    * Tests the <!-- INCLUDE --> functionality
     *
     */
     function testInclude()
@@ -122,7 +142,7 @@ class Sigma_api_TestCase extends PHPUnit_TestCase
 
     function testRemovePlaceholders()
     {
-        $result = $this->tpl->setTemplate('{placeholder1},{placeholder2},{placeholder3}', true, true);
+        $result = $this->tpl->setTemplate('{placeholder1},{placeholder2},{placeholder3},{placeholder4.index}', true, true);
         if (PEAR::isError($result)) {
             $this->assertTrue(false, 'Error setting template: '. $result->getMessage());
         }
@@ -131,7 +151,7 @@ class Sigma_api_TestCase extends PHPUnit_TestCase
             'placeholder1' => 'var1',
             'placeholder2' => 'var2'
         ));
-        $this->assertEquals('var1,var2,', $this->tpl->get());
+        $this->assertEquals('var1,var2,,', $this->tpl->get());
 
         // Default behaviour is to remove {stuff} from data as well
         $result = $this->tpl->setTemplate('{placeholder1},{placeholder2},{placeholder3}', true, true);
@@ -157,7 +177,7 @@ class Sigma_api_TestCase extends PHPUnit_TestCase
         $this->tpl->touchBlock('inner_block');
         $this->assertEquals('data|{inner}#', $this->_stripWhitespace($this->tpl->get()));
     }
-   
+
     function testHideBlock()
     {
         if (!$this->_methodExists('hideBlock')) {
@@ -186,6 +206,7 @@ class Sigma_api_TestCase extends PHPUnit_TestCase
             $this->assertTrue(false, 'Error loading template file: '. $result->getMessage());
         }
         $this->tpl->setGlobalVariable('glob', 'glob');
+        $this->tpl->setGlobalVariable('globArray', array('glob1', 'glob2'));
         // {var2} is not, block_two should be removed
         $this->tpl->setVariable(array(
             'var1' => 'one',
@@ -195,7 +216,7 @@ class Sigma_api_TestCase extends PHPUnit_TestCase
             $this->tpl->setVariable('var4', $i + 1);
             $this->tpl->parse('block_four');
         } // for
-        $this->assertEquals('glob:one#glob:three|glob:1|glob:2|glob:3#', $this->_stripWhitespace($this->tpl->get()));
+        $this->assertEquals('glob:glob1:one#glob:glob1:three|glob:glob2:1|glob:glob2:2|glob:glob2:3#', $this->_stripWhitespace($this->tpl->get()));
     }
 
     function testOptionPreserveData()
@@ -215,11 +236,19 @@ class Sigma_api_TestCase extends PHPUnit_TestCase
 
     function testPlaceholderExists()
     {
+        // simple vars
         $this->tpl->setTemplate('{var}');
         $this->assertTrue($this->tpl->placeholderExists('var'), 'Existing placeholder \'var\' reported as nonexistant');
         $this->assertTrue(!$this->tpl->placeholderExists('foobar'), 'Nonexistant placeholder \'foobar\' reported as existing');
         $this->assertTrue($this->tpl->placeholderExists('var', '__global__'), 'Existing in block \'__global__\' placeholder \'var\' reported as nonexistant');
         $this->assertTrue(!$this->tpl->placeholderExists('foobar', '__global__'), 'Nonexistant in block \'__global__\' placeholder \'foobar\' reported as existing');
+
+        // extended vars
+        $this->tpl->setTemplate('{arrayVar.0}');
+        $this->assertTrue($this->tpl->placeholderExists('arrayVar.0'), 'Existing placeholder \'arrayVar.0\' reported as nonexistant');
+        $this->assertTrue(!$this->tpl->placeholderExists('arrayVar'), 'Nonexistant placeholder \'arrayVar\' reported as existing');
+        $this->assertTrue($this->tpl->placeholderExists('arrayVar.0', '__global__'), 'Existing in block \'__global__\' placeholder \'arrayVar.0\' reported as nonexistant');
+        $this->assertTrue(!$this->tpl->placeholderExists('arrayVar', '__global__'), 'Nonexistant in block \'__global__\' placeholder \'arrayVar\' reported as existing');
     }
 
     function testBlockExists()
@@ -354,7 +383,7 @@ class Sigma_api_TestCase extends PHPUnit_TestCase
         $this->assertEquals($tree, $this->tpl->getBlockList('__global__', true));
         $this->assertEquals(array('inner_block'), $this->tpl->getBlockList('outer_block'));
     }
-    
+
     function testGetPlaceholderList()
     {
         $result = $this->tpl->loadTemplatefile('blockiteration.html', true, true);
@@ -366,10 +395,11 @@ class Sigma_api_TestCase extends PHPUnit_TestCase
 
     function testCallbackShorthand()
     {
-        $this->tpl->setTemplate('{var}|{var:h}|{var:u}|{var:j}|{var:uppercase}', true, true);
+        $this->tpl->setTemplate('{var}|{var:h}|{var:u}|{var:j}|{var:uppercase}|{arrayVar.0:j}|{arrayVar.index:uppercase}', true, true);
         $this->tpl->setCallbackFunction('uppercase', 'strtoupper');
         $this->tpl->setVariable('var', '"m&m"');
-        $this->assertEquals('"m&m"|&quot;m&amp;m&quot;|%22m%26m%22|\\"m&m\\"|"M&M"', $this->tpl->get());
+        $this->tpl->setVariable('arrayVar', array('"m&m"', 'index' => '"m&m"'));
+        $this->assertEquals('"m&m"|&quot;m&amp;m&quot;|%22m%26m%22|\\"m&m\\"|"M&M"|\\"m&m\\"|"M&M"', $this->tpl->get());
     }
 
     function testClearVariables()
