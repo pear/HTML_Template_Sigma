@@ -1,27 +1,34 @@
 <?php
-//
-// +----------------------------------------------------------------------+
-// | PHP Version 4                                                        |
-// +----------------------------------------------------------------------+
-// | Copyright (c) 1997-2003 The PHP Group                                |
-// +----------------------------------------------------------------------+
-// | This source file is subject to version 2.02 of the PHP license,      |
-// | that is bundled with this package in the file LICENSE, and is        |
-// | available at through the world-wide-web at                           |
-// | http://www.php.net/license/2_02.txt.                                 |
-// | If you did not receive a copy of the PHP license and are unable to   |
-// | obtain it through the world-wide-web, please send a note to          |
-// | license@php.net so we can mail you a copy immediately.               |
-// +----------------------------------------------------------------------+
-// | Authors: Ulf Wendel <ulf.wendel@phpdoc.de>                           |
-// |          Alexey Borzov <avb@php.net>                                 |
-// +----------------------------------------------------------------------+
-//
-// $Id$
-//
+/**
+ * Implementation of Integrated Templates API with template 'compilation' added.
+ * 
+ * PHP versions 4 and 5
+ *
+ * LICENSE: This source file is subject to version 3.01 of the PHP license
+ * that is available through the world-wide-web at the following URI:
+ * http://www.php.net/license/3_01.txt If you did not receive a copy of
+ * the PHP License and are unable to obtain it through the web, please
+ * send a note to license@php.net so we can mail you a copy immediately.
+ *
+ * @category    HTML
+ * @package     HTML_Template_Sigma
+ * @author      Ulf Wendel <ulf.wendel@phpdoc.de>
+ * @author      Alexey Borzov <avb@php.net>
+ * @copyright   2001-2007 The PHP Group
+ * @license     http://www.php.net/license/3_01.txt PHP License 3.01
+ * @version     CVS: $Id$
+ * @link        http://pear.php.net/package/HTML_Template_Sigma
+ */
 
+/**
+ * PEAR and PEAR_Error classes (for error handling)
+ */ 
 require_once 'PEAR.php';
 
+/**#@+
+ * Error codes
+ * @see HTML_Template_Sigma::errorMessage()
+ */
 define('SIGMA_OK',                         1);
 define('SIGMA_ERROR',                     -1);
 define('SIGMA_TPL_NOT_FOUND',             -2);
@@ -34,10 +41,10 @@ define('SIGMA_PLACEHOLDER_DUPLICATE',     -11);
 define('SIGMA_BLOCK_EXISTS',              -12);
 define('SIGMA_INVALID_CALLBACK',          -13);
 define('SIGMA_CALLBACK_SYNTAX_ERROR',     -14);
+/**#@-*/
 
 /**
-* HTML_Template_Sigma: implementation of Integrated Templates API with
-* template 'compilation' added.
+* Implementation of Integrated Templates API with template 'compilation' added.
 *
 * The main new feature in Sigma is the template 'compilation'. Consider the
 * following: when loading a template file the engine has to parse it using
@@ -58,11 +65,13 @@ define('SIGMA_CALLBACK_SYNTAX_ERROR',     -14);
 * itself. The engine knows that inner1 is a child of block2, there's
 * no need to tell it about this:
 *
+* <pre>
 * + __global__ (hidden and automatically added)
 *     + block1
 *     + block2
 *         + inner1
 *         + inner2
+* </pre>
 *
 * To add content to block1 you simply type:
 * <code>$tpl->setCurrentBlock("block1");</code>
@@ -112,11 +121,11 @@ define('SIGMA_CALLBACK_SYNTAX_ERROR',     -14);
 * $html = $tpl->get();
 * </code>
 *
+* @category HTML
+* @package  HTML_Template_Sigma
 * @author   Ulf Wendel <ulf.wendel@phpdoc.de>
 * @author   Alexey Borzov <avb@php.net>
-* @version  $Revision$
-* @access   public
-* @package  HTML_Template_Sigma
+* @version  Release: @package_version@
 */
 class HTML_Template_Sigma extends PEAR
 {
@@ -294,11 +303,8 @@ class HTML_Template_Sigma extends PEAR
    /**
     * Options to control some finer aspects of Sigma's work.
     *
-    * $_options['preserve_data'] If false, then substitute variables and remove empty
-    * placeholders in data passed through setVariable (see also bugs #20199, #21951)
-    * $_options['trim_on_save'] Whether to trim extra whitespace from template on cache save.
-    * Generally safe to have this on, unless you have <pre></pre> in templates or want to
-    * preserve HTML indentantion
+    * @var      array
+    * @access   private
     */
     var $_options = array(
         'preserve_data' => false,
@@ -428,6 +434,14 @@ class HTML_Template_Sigma extends PEAR
 
    /**
     * Sets the option for the template class
+    *
+    * Currently available options:
+    * - preserve_data: If false (default), then substitute variables and 
+    *   remove empty placeholders in data passed through setVariable (see also
+    *   PHP bugs #20199, #21951)
+    * - trim_on_save: Whether to trim extra whitespace from template on cache
+    *   save (defaults to true). Generally safe to leave this on, unless you 
+    *   have <<pre>><</pre>> in templates or want to preserve HTML indentantion
     *
     * @access public
     * @param  string  option name
@@ -1049,7 +1063,9 @@ class HTML_Template_Sigma extends PEAR
     *
     * Sigma templates can contain simple function calls. This means that the
     * author of the template can add a special placeholder to it:
+    * <pre>
     * func_h1("embedded in h1")
+    * </pre>
     * Sigma will parse the template for these placeholders and will allow
     * you to define a callback function for them. Callback will be called
     * automatically when the block containing such function call is parse()'d.
@@ -1063,7 +1079,7 @@ class HTML_Template_Sigma extends PEAR
     * logic through them, then you're reinventing the wheel. Consider using
     * XML/XSLT, native PHP or some other template engine.
     *
-    * <?php
+    * <code>
     * function h_one($arg) {
     *    return '<h1>' . $arg . '</h1>';
     * }
@@ -1071,10 +1087,12 @@ class HTML_Template_Sigma extends PEAR
     * $tpl = new HTML_Template_Sigma( ... );
     * ...
     * $tpl->setCallbackFunction('h1', 'h_one');
-    * ?>
+    * </code>
     *
     * template:
+    * <pre>
     * func_h1('H1 Headline');
+    * </pre>
     *
     * @param    string    Function name in the template
     * @param    mixed     A callback: anything that can be passed to call_user_func_array()
@@ -1300,7 +1318,6 @@ class HTML_Template_Sigma extends PEAR
    /**
     * Resets the object's properties, used before processing a new template
     *
-    * @access   private
     * @param    boolean     remove unknown/unused variables?
     * @param    boolean     remove empty blocks?
     * @see      setTemplate(), loadTemplateFile()
