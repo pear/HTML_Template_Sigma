@@ -1,7 +1,7 @@
 <?php
 /**
  * Unit tests for HTML_Template_Sigma
- * 
+ *
  * PHP versions 4 and 5
  *
  * LICENSE: This source file is subject to version 3.01 of the PHP license
@@ -21,6 +21,11 @@
  */
 
 /**
+ * PHPUnit Test Case
+ */
+require_once 'PHPUnit/Framework/TestCase.php';
+
+/**
  * Test case for fixed bugs
  *
  * @category    HTML
@@ -29,7 +34,7 @@
  * @version     @package_version@
  * @ignore
  */
-class Sigma_bug_testcase extends PHPUnit_TestCase
+class Sigma_bug_testcase extends PHPUnit_Framework_TestCase
 {
    /**
     * A template object
@@ -37,15 +42,10 @@ class Sigma_bug_testcase extends PHPUnit_TestCase
     */
     var $tpl;
 
-    function Sigma_bug_TestCase($name)
-    {
-        $this->PHPUnit_TestCase($name);
-    }
-
     function setUp()
     {
         $className = 'HTML_Template_' . $GLOBALS['IT_class'];
-        $this->tpl =& new $className('./templates');
+        $this->tpl =& new $className(dirname(__FILE__) . '/templates');
     }
 
     function tearDown()
@@ -61,12 +61,12 @@ class Sigma_bug_testcase extends PHPUnit_TestCase
             // realpath() on windows will return full path including drive letter
             $this->tpl->setRoot('');
             $this->tpl->setCacheRoot($Sigma_cache_dir);
-            $result = $this->tpl->loadTemplatefile(realpath('./templates') . '\\' . 'loadtemplatefile.html');
+            $result = $this->tpl->loadTemplatefile(realpath(dirname(__FILE__) . '\\templates') . '\\' . 'loadtemplatefile.html');
             if (PEAR::isError($result)) {
                 $this->assertTrue(false, 'Error loading template file: '. $result->getMessage());
             }
             $this->assertEquals('A template', trim($this->tpl->get()));
-            $result = $this->tpl->loadTemplatefile(realpath('./templates') . '\\' . 'loadtemplatefile.html');
+            $result = $this->tpl->loadTemplatefile(realpath(dirname(__FILE__) . '\\templates') . '\\' . 'loadtemplatefile.html');
             if (PEAR::isError($result)) {
                 $this->assertTrue(false, 'Error loading template file: '. $result->getMessage());
             }

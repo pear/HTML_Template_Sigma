@@ -1,7 +1,7 @@
 <?php
 /**
  * Unit tests for HTML_Template_Sigma
- * 
+ *
  * PHP versions 4 and 5
  *
  * LICENSE: This source file is subject to version 3.01 of the PHP license
@@ -21,6 +21,11 @@
  */
 
 /**
+ * PHPUnit Test Case
+ */
+require_once 'PHPUnit/Framework/TestCase.php';
+
+/**
  * Test case for common package usage patterns
  *
  * @category    HTML
@@ -29,7 +34,7 @@
  * @version     @package_version@
  * @ignore
  */
-class Sigma_Usage_TestCase extends PHPUnit_TestCase
+class Sigma_Usage_TestCase extends PHPUnit_Framework_TestCase
 {
    /**
     * A template object
@@ -37,15 +42,10 @@ class Sigma_Usage_TestCase extends PHPUnit_TestCase
     */
     var $tpl;
 
-    function Sigma_Usage_TestCase($name)
-    {
-        $this->PHPUnit_TestCase($name);
-    }
-
     function setUp()
     {
         $className = 'HTML_Template_' . $GLOBALS['IT_class'];
-        $this->tpl =& new $className('./templates');
+        $this->tpl =& new $className(dirname(__FILE__) . '/templates');
     }
 
     function tearDown()
@@ -58,7 +58,7 @@ class Sigma_Usage_TestCase extends PHPUnit_TestCase
         return preg_replace('/\\s+/', '', $str);
     }
 
-    function _methodExists($name) 
+    function _methodExists($name)
     {
         if (in_array(strtolower($name), array_map('strtolower', get_class_methods($this->tpl)))) {
             return true;
@@ -80,7 +80,7 @@ class Sigma_Usage_TestCase extends PHPUnit_TestCase
             'c',
             array('d', array('5', '6', '7'))
         );
-        
+
         $result = $this->tpl->loadTemplateFile('blockiteration.html', true, true);
         if (PEAR::isError($result)) {
             $this->assertTrue(false, 'Error loading template file: '. $result->getMessage());
@@ -101,7 +101,7 @@ class Sigma_Usage_TestCase extends PHPUnit_TestCase
     }
 
    /**
-    * 
+    *
     *
     */
     function testTouchBlockIteration()

@@ -1,7 +1,7 @@
 <?php
 /**
  * Unit tests for HTML_Template_Sigma
- * 
+ *
  * PHP versions 4 and 5
  *
  * LICENSE: This source file is subject to version 3.01 of the PHP license
@@ -23,7 +23,7 @@
 /**
  * Test case for class API
  */
-require_once 'Sigma_api_testcase.php';
+require_once dirname(__FILE__) . '/Sigma_api_testcase.php';
 
 /**
  * Test case for cache functionality
@@ -39,17 +39,12 @@ require_once 'Sigma_api_testcase.php';
  */
 class Sigma_cache_TestCase extends Sigma_api_TestCase
 {
-    function Sigma_cache_TestCase($name)
-    {
-        $this->Sigma_api_TestCase($name);
-    }
-
     function setUp()
     {
         global $Sigma_cache_dir;
 
         $className = 'HTML_Template_' . $GLOBALS['IT_class'];
-        $this->tpl =& new $className('./templates', $Sigma_cache_dir);
+        $this->tpl =& new $className(dirname(__FILE__) . '/templates', $Sigma_cache_dir);
     }
 
     function _removeCachedFiles($filename)

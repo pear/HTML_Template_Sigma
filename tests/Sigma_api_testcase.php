@@ -1,7 +1,7 @@
 <?php
 /**
  * Unit tests for HTML_Template_Sigma
- * 
+ *
  * PHP versions 4 and 5
  *
  * LICENSE: This source file is subject to version 3.01 of the PHP license
@@ -21,6 +21,11 @@
  */
 
 /**
+ * PHPUnit Test Case
+ */
+require_once 'PHPUnit/Framework/TestCase.php';
+
+/**
  * Test case for class API
  *
  * @category    HTML
@@ -29,7 +34,7 @@
  * @version     @package_version@
  * @ignore
  */
-class Sigma_api_TestCase extends PHPUnit_TestCase
+class Sigma_api_TestCase extends PHPUnit_Framework_TestCase
 {
    /**
     * A template object
@@ -37,15 +42,10 @@ class Sigma_api_TestCase extends PHPUnit_TestCase
     */
     var $tpl;
 
-    function Sigma_api_TestCase($name)
-    {
-        $this->PHPUnit_TestCase($name);
-    }
-
     function setUp()
     {
         $className = 'HTML_Template_' . $GLOBALS['IT_class'];
-        $this->tpl =& new $className('./templates');
+        $this->tpl =& new $className(dirname(__FILE__) . '/templates');
     }
 
     function tearDown()
@@ -259,17 +259,17 @@ class Sigma_api_TestCase extends PHPUnit_TestCase
     {
         // simple vars
         $this->tpl->setTemplate('{var}');
-        $this->assertTrue($this->tpl->placeholderExists('var'), 'Existing placeholder \'var\' reported as nonexistant');
-        $this->assertTrue(!$this->tpl->placeholderExists('foobar'), 'Nonexistant placeholder \'foobar\' reported as existing');
-        $this->assertTrue($this->tpl->placeholderExists('var', '__global__'), 'Existing in block \'__global__\' placeholder \'var\' reported as nonexistant');
-        $this->assertTrue(!$this->tpl->placeholderExists('foobar', '__global__'), 'Nonexistant in block \'__global__\' placeholder \'foobar\' reported as existing');
+        $this->assertEquals('__global__', $this->tpl->placeholderExists('var'), 'Existing placeholder \'var\' reported as nonexistant');
+        $this->assertEquals('', $this->tpl->placeholderExists('foobar'), 'Nonexistant placeholder \'foobar\' reported as existing');
+        $this->assertEquals('__global__', $this->tpl->placeholderExists('var', '__global__'), 'Existing in block \'__global__\' placeholder \'var\' reported as nonexistant');
+        $this->assertEquals('', $this->tpl->placeholderExists('foobar', '__global__'), 'Nonexistant in block \'__global__\' placeholder \'foobar\' reported as existing');
 
         // extended vars
         $this->tpl->setTemplate('{arrayVar.0}');
-        $this->assertTrue($this->tpl->placeholderExists('arrayVar.0'), 'Existing placeholder \'arrayVar.0\' reported as nonexistant');
-        $this->assertTrue(!$this->tpl->placeholderExists('arrayVar'), 'Nonexistant placeholder \'arrayVar\' reported as existing');
-        $this->assertTrue($this->tpl->placeholderExists('arrayVar.0', '__global__'), 'Existing in block \'__global__\' placeholder \'arrayVar.0\' reported as nonexistant');
-        $this->assertTrue(!$this->tpl->placeholderExists('arrayVar', '__global__'), 'Nonexistant in block \'__global__\' placeholder \'arrayVar\' reported as existing');
+        $this->assertEquals('__global__', $this->tpl->placeholderExists('arrayVar.0'), 'Existing placeholder \'arrayVar.0\' reported as nonexistant');
+        $this->assertEquals('', $this->tpl->placeholderExists('arrayVar'), 'Nonexistant placeholder \'arrayVar\' reported as existing');
+        $this->assertEquals('__global__', $this->tpl->placeholderExists('arrayVar.0', '__global__'), 'Existing in block \'__global__\' placeholder \'arrayVar.0\' reported as nonexistant');
+        $this->assertEquals('', $this->tpl->placeholderExists('arrayVar', '__global__'), 'Nonexistant in block \'__global__\' placeholder \'arrayVar\' reported as existing');
     }
 
     function testBlockExists()
