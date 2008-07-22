@@ -1,7 +1,7 @@
 <?php
 /**
  * Implementation of Integrated Templates API with template 'compilation' added.
- * 
+ *
  * PHP versions 4 and 5
  *
  * LICENSE: This source file is subject to version 3.01 of the PHP license
@@ -22,7 +22,7 @@
 
 /**
  * PEAR and PEAR_Error classes (for error handling)
- */ 
+ */
 require_once 'PEAR.php';
 
 /**#@+
@@ -308,7 +308,8 @@ class HTML_Template_Sigma extends PEAR
     */
     var $_options = array(
         'preserve_data' => false,
-        'trim_on_save'  => true
+        'trim_on_save'  => true,
+        'charset'       => 'iso-8859-1'
     );
 
    /**
@@ -351,6 +352,12 @@ class HTML_Template_Sigma extends PEAR
     var $includeRegExp = '#<!--\s+INCLUDE\s+(\S+)\s+-->#ime';
 
    /**
+    * RegExp used to find (and remove) comments in the template
+    * @var  string
+    */
+    var $commentRegExp = '#<!--\s+COMMENT\s+-->.*?<!--\s+/COMMENT\s+-->#sm';
+
+   /**
     * Files queued for inclusion
     * @var    array
     * @access private
@@ -381,8 +388,10 @@ class HTML_Template_Sigma extends PEAR
         $this->setRoot($root);
         $this->setCacheRoot($cacheRoot);
 
-        $this->setCallbackFunction('h', 'htmlspecialchars');
+        $this->setCallbackFunction('h', array(&$this, '_htmlspecialchars'));
+        $this->setCallbackFunction('e', array(&$this, '_htmlentities'));
         $this->setCallbackFunction('u', 'urlencode');
+        $this->setCallbackFunction('r', 'rawurlencode');
         $this->setCallbackFunction('j', array(&$this, '_jsEscape'));
     }
 
@@ -436,12 +445,13 @@ class HTML_Template_Sigma extends PEAR
     * Sets the option for the template class
     *
     * Currently available options:
-    * - preserve_data: If false (default), then substitute variables and 
+    * - preserve_data: If false (default), then substitute variables and
     *   remove empty placeholders in data passed through setVariable (see also
     *   PHP bugs #20199, #21951)
     * - trim_on_save: Whether to trim extra whitespace from template on cache
-    *   save (defaults to true). Generally safe to leave this on, unless you 
+    *   save (defaults to true). Generally safe to leave this on, unless you
     *   have <<pre>><</pre>> in templates or want to preserve HTML indentantion
+    * - charset: is used by builtin template callback 'h'/'e'. Defaults to 'iso-8859-1'
     *
     * @access public
     * @param  string  option name
@@ -832,7 +842,11 @@ class HTML_Template_Sigma extends PEAR
     function setTemplate($template, $removeUnknownVariables = true, $removeEmptyBlocks = true)
     {
         $this->_resetTemplate($removeUnknownVariables, $removeEmptyBlocks);
-        $list = $this->_buildBlocks('<!-- BEGIN __global__ -->'.$template.'<!-- END __global__ -->');
+        $list = $this->_buildBlocks(
+            '<!-- BEGIN __global__ -->' .
+            preg_replace($this->commentRegExp, '', $template) .
+            '<!-- END __global__ -->'
+        );
         if (PEAR::isError($list)) {
             return $list;
         }
@@ -906,8 +920,11 @@ class HTML_Template_Sigma extends PEAR
             return $this->raiseError($this->errorMessage(SIGMA_PLACEHOLDER_DUPLICATE, $placeholder), SIGMA_PLACEHOLDER_DUPLICATE);
         }
 
-        $template = "<!-- BEGIN $block -->" . $template . "<!-- END $block -->";
-        $list     = $this->_buildBlocks($template);
+        $list = $this->_buildBlocks(
+            "<!-- BEGIN $block -->" .
+            preg_replace($this->commentRegExp, '', $template) .
+            "<!-- END $block -->"
+        );
         if (PEAR::isError($list)) {
             return $list;
         }
@@ -975,9 +992,12 @@ class HTML_Template_Sigma extends PEAR
         }
         // should not throw a error as we already checked for block existance
         $this->_removeBlockData($block, $keepContent);
-        $template = "<!-- BEGIN $block -->" . $template . "<!-- END $block -->";
 
-        $list = $this->_buildBlocks($template);
+        $list = $this->_buildBlocks(
+            "<!-- BEGIN $block -->" .
+            preg_replace($this->commentRegExp, '', $template) .
+            "<!-- END $block -->"
+        );
         if (PEAR::isError($list)) {
             return $list;
         }
@@ -1799,6 +1819,32 @@ class HTML_Template_Sigma extends PEAR
                     "\r" => '\r', "'"  => "\\'", "\n" => '\n',
                     '"'  => '\"', "\t" => '\t',  '\\' => '\\\\'
                ));
+    }
+
+
+   /**
+    * Wrapper around htmlspecialchars() needed to use the charset option
+    *
+    * @access private
+    * @param  string
+    * @return string
+    */
+    function _htmlspecialchars($value)
+    {
+        return htmlspecialchars($value, ENT_COMPAT, $this->_options['charset']);
+    }
+
+
+   /**
+    * Wrapper around htmlentities() needed to use the charset option
+    *
+    * @access private
+    * @param  string
+    * @return string
+    */
+    function _htmlentities($value)
+    {
+        return htmlentities($value, ENT_COMPAT, $this->_options['charset']);
     }
 }
 ?>

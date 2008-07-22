@@ -26,10 +26,10 @@ Features:
   <email>avb@php.net</email>
   <active>yes</active>
  </lead>
- <date>2007-05-19</date>
+ <date>2008-07-22</date>
  <version>
-  <release>1.1.6</release>
-  <api>1.1.5</api>
+  <release>1.2.0</release>
+  <api>1.2.0</api>
  </version>
  <stability>
   <release>stable</release>
@@ -37,8 +37,16 @@ Features:
  </stability>
  <license uri="http://www.php.net/license">PHP License</license>
  <notes>
-Migrate to package.xml version 2.0, use proper header comment blocks.
-Minor fixes to phpdoc comments, no code changes since previous release.
+Changed unit tests to use current PHPUnit from http://www.phpunit.de/ rather
+than old unsupported one from http://pear.php.net/
+
+Implemented parts of request #12221 (thanks to Carsten Wiedmann for ideas and 
+their initial implementation)
+ * It is now possible to add comments to the template file that are removed 
+   from output: &lt;!-- COMMENT --&gt; ... &lt;!-- /COMMENT --&gt;
+ * Added new builtin callbacks 'e' and 'r' for htmlentities() and 
+   rawurlencode(), respectively
+ * Added the 'charset' option for builtin 'h' and 'e' callbacks
  </notes>
  <contents>
   <dir name="/" baseinstalldir="HTML/Template">
@@ -70,7 +78,7 @@ Minor fixes to phpdoc comments, no code changes since previous release.
      <file name="replaceblock.html" role="test" />
      <file name="__include.html" role="test" />
     </dir> <!-- /tests/templates -->
-    <file name="Console_TestListener.php" role="test">
+    <file name="AllTests.php" role="test">
      <tasks:replace from="@package_version@" to="version" type="package-info" />
     </file>
     <file name="Sigma_api_testcase.php" role="test">
@@ -85,9 +93,6 @@ Minor fixes to phpdoc comments, no code changes since previous release.
     <file name="Sigma_usage_testcase.php" role="test">
      <tasks:replace from="@package_version@" to="version" type="package-info" />
     </file>
-    <file name="test.php" role="test">
-     <tasks:replace from="@package_version@" to="version" type="package-info" />
-    </file>
    </dir> <!-- /tests -->
    <file name="Sigma.php" role="php">
     <tasks:replace from="@package_version@" to="version" type="package-info" />
@@ -97,10 +102,10 @@ Minor fixes to phpdoc comments, no code changes since previous release.
  <dependencies>
   <required>
    <php>
-    <min>4.0.0</min>
+    <min>4.0.6</min>
    </php>
    <pearinstaller>
-    <min>1.4.0b1</min>
+    <min>1.4.3</min>
    </pearinstaller>
    <extension>
     <name>ctype</name>
@@ -109,6 +114,22 @@ Minor fixes to phpdoc comments, no code changes since previous release.
  </dependencies>
  <phprelease />
  <changelog>
+  <release>
+   <version>
+    <release>1.1.6</release>
+    <api>1.1.5</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2007-05-19</date>
+   <license uri="http://www.php.net/license">PHP License</license>
+   <notes>
+Migrate to package.xml version 2.0, use proper header comment blocks.
+Minor fixes to phpdoc comments, no code changes since previous release.
+   </notes>
+  </release>
   <release>
    <version>
     <release>1.1.5</release>

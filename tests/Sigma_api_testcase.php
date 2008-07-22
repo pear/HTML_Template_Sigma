@@ -416,11 +416,11 @@ class Sigma_api_TestCase extends PHPUnit_Framework_TestCase
 
     function testCallbackShorthand()
     {
-        $this->tpl->setTemplate('{var}|{var:h}|{var:u}|{var:j}|{var:uppercase}|{arrayVar.0:j}|{arrayVar.index:uppercase}', true, true);
+        $this->tpl->setTemplate('{var}|{var:h}|{var:u}|{var:j}|{var:r}|{var:e}|{var:uppercase}|{arrayVar.0:j}|{arrayVar.index:uppercase}', true, true);
         $this->tpl->setCallbackFunction('uppercase', 'strtoupper');
-        $this->tpl->setVariable('var', '"m&m"');
+        $this->tpl->setVariable('var', '"m&m" ');
         $this->tpl->setVariable('arrayVar', array('"m&m"', 'index' => '"m&m"'));
-        $this->assertEquals('"m&m"|&quot;m&amp;m&quot;|%22m%26m%22|\\"m&m\\"|"M&M"|\\"m&m\\"|"M&M"', $this->tpl->get());
+        $this->assertEquals('"m&m" |&quot;m&amp;m&quot; |%22m%26m%22+|\\"m&m\\" |%22m%26m%22%20|&quot;m&amp;m&quot; |"M&M" |\\"m&m\\"|"M&M"', $this->tpl->get());
     }
 
     function testClearVariables()
@@ -445,6 +445,20 @@ class Sigma_api_TestCase extends PHPUnit_Framework_TestCase
             '|func_fake("O\'really")|func_fake(\'\\\\O\\\'really\\\\\')|func_fake("\\\\O\\"really\\\\")|'
         );
         $this->assertEquals('| foo |foo|<a href="javascript:foo(bar,baz)">foo</a>|O\'really|\\O\'really\\|\\O"really\\|', $this->tpl->get());
+    }
+
+    function testComments()
+    {
+        $this->tpl->setTemplate('A template<!-- COMMENT -->with comment<!-- /COMMENT -->');
+        $this->assertEquals('A template', $this->tpl->get());
+    }
+
+    function testOptionCharset()
+    {
+        $this->tpl->setOption('charset', 'windows-1251');
+        $this->tpl->setTemplate('{var:e}');
+        $this->tpl->setVariable('var', 'Тестируем');
+        $this->assertEquals('&#1058;&#1077;&#1089;&#1090;&#1080;&#1088;&#1091;&#1077;&#1084;', $this->tpl->get());
     }
 }
 
