@@ -44,7 +44,7 @@ class Sigma_bug_testcase extends PHPUnit_Framework_TestCase
 
     function setUp()
     {
-        $className = 'HTML_Template_' . $GLOBALS['IT_class'];
+        $className = 'HTML_Template_' . $GLOBALS['_HTML_Template_Sigma_IT_class'];
         $this->tpl =& new $className(dirname(__FILE__) . '/templates');
     }
 
@@ -55,23 +55,22 @@ class Sigma_bug_testcase extends PHPUnit_Framework_TestCase
 
     function testBug6902()
     {
-        global $Sigma_cache_dir;
-
-        if (OS_WINDOWS) {
-            // realpath() on windows will return full path including drive letter
-            $this->tpl->setRoot('');
-            $this->tpl->setCacheRoot($Sigma_cache_dir);
-            $result = $this->tpl->loadTemplatefile(realpath(dirname(__FILE__) . '\\templates') . '\\' . 'loadtemplatefile.html');
-            if (PEAR::isError($result)) {
-                $this->assertTrue(false, 'Error loading template file: '. $result->getMessage());
-            }
-            $this->assertEquals('A template', trim($this->tpl->get()));
-            $result = $this->tpl->loadTemplatefile(realpath(dirname(__FILE__) . '\\templates') . '\\' . 'loadtemplatefile.html');
-            if (PEAR::isError($result)) {
-                $this->assertTrue(false, 'Error loading template file: '. $result->getMessage());
-            }
-            $this->assertEquals('A template', trim($this->tpl->get()));
+        if (!OS_WINDOWS) {
+            return $this->markTestSkipped('Test for a Windows-specific bug');
         }
+        // realpath() on windows will return full path including drive letter
+        $this->tpl->setRoot('');
+        $this->tpl->setCacheRoot($GLOBALS['_HTML_Template_Sigma_cache_dir']);
+        $result = $this->tpl->loadTemplatefile(realpath(dirname(__FILE__) . '\\templates') . '\\' . 'loadtemplatefile.html');
+        if (PEAR::isError($result)) {
+            $this->assertTrue(false, 'Error loading template file: '. $result->getMessage());
+        }
+        $this->assertEquals('A template', trim($this->tpl->get()));
+        $result = $this->tpl->loadTemplatefile(realpath(dirname(__FILE__) . '\\templates') . '\\' . 'loadtemplatefile.html');
+        if (PEAR::isError($result)) {
+            $this->assertTrue(false, 'Error loading template file: '. $result->getMessage());
+        }
+        $this->assertEquals('A template', trim($this->tpl->get()));
     }
 }
 ?>

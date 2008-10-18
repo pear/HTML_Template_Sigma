@@ -44,7 +44,7 @@ class Sigma_Usage_TestCase extends PHPUnit_Framework_TestCase
 
     function setUp()
     {
-        $className = 'HTML_Template_' . $GLOBALS['IT_class'];
+        $className = 'HTML_Template_' . $GLOBALS['_HTML_Template_Sigma_IT_class'];
         $this->tpl =& new $className(dirname(__FILE__) . '/templates');
     }
 
