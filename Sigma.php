@@ -681,15 +681,18 @@ class HTML_Template_Sigma extends PEAR
     * The function can be used either like setVariable("varname", "value")
     * or with one array $variables["varname"] = "value" given setVariable($variables)
     *
+    * If $value is an array ('key' => 'value', ...) then values from that array 
+    * will be assigned to template placeholders of the form {variable.key}, ...
+    *
     * @access public
     * @param  mixed     variable name or array ('varname'=>'value')
-    * @param  string    variable value if $variable is not an array
+    * @param  mixed     variable value if $variable is not an array
     */
     function setVariable($variable, $value = '')
     {
         if (is_array($variable)) {
             $this->_variables = array_merge($this->_variables, $variable);
-        } elseif (!is_array($variable) && is_array($value)) {
+        } elseif (is_array($value)) {
             $this->_variables = array_merge($this->_variables, $this->_flattenVariables($variable, $value));
         } else {
             $this->_variables[$variable] = $value;
@@ -702,14 +705,14 @@ class HTML_Template_Sigma extends PEAR
     *
     * @access public
     * @param  mixed     variable name or array ('varname'=>'value')
-    * @param  string    variable value if $variable is not an array
+    * @param  mixed     variable value if $variable is not an array
     * @see    setVariable()
     */
     function setGlobalVariable($variable, $value = '')
     {
         if (is_array($variable)) {
             $this->_globalVariables = array_merge($this->_globalVariables, $variable);
-        } else if (!is_array($variable) && is_array($value)) {
+        } elseif (is_array($value)) {
             $this->_globalVariables = array_merge($this->_globalVariables, $this->_flattenVariables($variable, $value));
         } else {
             $this->_globalVariables[$variable] = $value;
