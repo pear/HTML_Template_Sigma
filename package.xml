@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<package packagerversion="1.9.0RC1" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0 http://pear.php.net/dtd/tasks-1.0.xsd http://pear.php.net/dtd/package-2.0 http://pear.php.net/dtd/package-2.0.xsd">
+<package packagerversion="1.9.1" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0 http://pear.php.net/dtd/tasks-1.0.xsd http://pear.php.net/dtd/package-2.0 http://pear.php.net/dtd/package-2.0.xsd">
  <name>HTML_Template_Sigma</name>
  <channel>pear.php.net</channel>
  <summary>An implementation of Integrated Templates API with template &apos;compilation&apos; added</summary>
@@ -20,10 +20,10 @@ Features:
   <email>avb@php.net</email>
   <active>yes</active>
  </lead>
- <date>2010-02-15</date>
- <time>06:26:30</time>
+ <date>2010-10-25</date>
+ <time>23:02:05</time>
  <version>
-  <release>1.2.0</release>
+  <release>1.2.1</release>
   <api>1.2.0</api>
  </version>
  <stability>
@@ -32,56 +32,43 @@ Features:
  </stability>
  <license uri="http://www.php.net/license">PHP License</license>
  <notes>
-Changed unit tests to use current PHPUnit from http://www.phpunit.de/ rather
-than old unsupported one from http://pear.php.net/
+Automatically built QA release
+Req #12221 template comments, a new option &apos;charset&apos; and 2 new buildin
+functions - avb
 
-Implemented parts of request #12221 (thanks to Carsten Wiedmann for ideas and 
-their initial implementation)
- * It is now possible to add comments to the template file that are removed 
-   from output: &lt;!-- COMMENT --&gt; ... &lt;!-- /COMMENT --&gt;
- * Added new builtin callbacks &apos;e&apos; and &apos;r&apos; for htmlentities() and 
-   rawurlencode(), respectively
- * Added the &apos;charset&apos; option for builtin &apos;h&apos; and &apos;e&apos; callbacks
+Doc #13379 INCLUDE directive ignored when using setTemplate - avb
+
+Doc #14691 User note that is a documentation problem - avb
  </notes>
  <contents>
   <dir baseinstalldir="/" name="/">
-   <file baseinstalldir="/" md5sum="4aa6ee5b713daec355a81c19e556361a" name="docs/example_1.php" role="doc" />
-   <file baseinstalldir="/" md5sum="1d4edaa7203099b08efeb48ae6b3ebed" name="docs/example_2.php" role="doc" />
-   <file baseinstalldir="/" md5sum="7e27523375037ddda20d40ee0180d13d" name="docs/example_3.php" role="doc" />
-   <file baseinstalldir="/" md5sum="0495ddaf90067d9c1009b4b73267c156" name="docs/example_4.php" role="doc" />
-   <file baseinstalldir="/" md5sum="7ff9c08e9ad53d6b830521c711cf4236" name="docs/templates/example_1.html" role="doc" />
-   <file baseinstalldir="/" md5sum="8730abb99b6fbdc7bf2f2ce8dc74c7d8" name="docs/templates/example_2.html" role="doc" />
-   <file baseinstalldir="/" md5sum="1628b07f622b3e748aa47ed2a11e22a0" name="docs/templates/example_3.html" role="doc" />
-   <file baseinstalldir="/" md5sum="74c4a22843a171bb7b55539e027c9b19" name="docs/templates/example_3_add.html" role="doc" />
-   <file baseinstalldir="/" md5sum="6f90c42a2f079149d9a58ce58ea6ce41" name="docs/templates/example_3_include.html" role="doc" />
-   <file baseinstalldir="/" md5sum="0a1b539755d7aa543688ad1ae6d60a3a" name="docs/templates/example_3_replace_1.html" role="doc" />
-   <file baseinstalldir="/" md5sum="17afcfb5c40babbff51c100228622ad5" name="docs/templates/example_3_replace_2.html" role="doc" />
-   <file baseinstalldir="/" md5sum="b03d728576d17f62c58533696031dade" name="docs/templates/example_4.html" role="doc" />
-   <file baseinstalldir="/" md5sum="e4bd395266054b55a86c09821c935f6e" name="HTML/Template/Sigma.php" role="php" />
-   <file baseinstalldir="/" md5sum="7d440981ff27adc991b20db8f2d4906f" name="tests/AllTests.php" role="test">
-    <tasks:replace from="@package_version@" to="version" type="package-info" />
-   </file>
-   <file baseinstalldir="/" md5sum="50d15f75fdc6b31daa22611777df31fc" name="tests/Sigma_api_testcase.php" role="test">
-    <tasks:replace from="@package_version@" to="version" type="package-info" />
-   </file>
-   <file baseinstalldir="/" md5sum="95cfa7943cb6713e032aafca5742cd62" name="tests/Sigma_bug_testcase.php" role="test">
-    <tasks:replace from="@package_version@" to="version" type="package-info" />
-   </file>
-   <file baseinstalldir="/" md5sum="58c1298b111631b5c43b2ac44b8310f3" name="tests/Sigma_cache_testcase.php" role="test">
-    <tasks:replace from="@package_version@" to="version" type="package-info" />
-   </file>
-   <file baseinstalldir="/" md5sum="460089bd6d65d252ea382eaa368dd0b4" name="tests/Sigma_usage_testcase.php" role="test">
-    <tasks:replace from="@package_version@" to="version" type="package-info" />
-   </file>
-   <file baseinstalldir="/" md5sum="e50de49b74a1d96bb77ddae2d0abdfc3" name="tests/templates/addblock.html" role="test" />
-   <file baseinstalldir="/" md5sum="22e56437378e53d08ba07d3dd2aa4b85" name="tests/templates/blockiteration.html" role="test" />
-   <file baseinstalldir="/" md5sum="4173bf97eec43787532e247ef9b2611a" name="tests/templates/blocks.html" role="test" />
-   <file baseinstalldir="/" md5sum="85dcfcf8b0f846b443a01dec6452b564" name="tests/templates/callback.html" role="test" />
-   <file baseinstalldir="/" md5sum="04279f8629778ba83bc224c8d70cf9cf" name="tests/templates/globals.html" role="test" />
-   <file baseinstalldir="/" md5sum="db5b226eff0218c831749c07042529f2" name="tests/templates/include.html" role="test" />
-   <file baseinstalldir="/" md5sum="d9a6425eebdfc6981465b4a228dbee51" name="tests/templates/loadtemplatefile.html" role="test" />
-   <file baseinstalldir="/" md5sum="5c7e2e9c32306db4b6667d2b57f1c0ac" name="tests/templates/replaceblock.html" role="test" />
-   <file baseinstalldir="/" md5sum="310552db4653b34dbb0f993847572fc5" name="tests/templates/__include.html" role="test" />
+   <file baseinstalldir="/" md5sum="f59621aae5922ae43ac93cb84bde610f" name="docs/example_1.php" role="doc" />
+   <file baseinstalldir="/" md5sum="8a2b117d67d156dc782dcc4463c78032" name="docs/example_2.php" role="doc" />
+   <file baseinstalldir="/" md5sum="d573db5f0075098fe05431618c6b1e75" name="docs/example_3.php" role="doc" />
+   <file baseinstalldir="/" md5sum="4ee5c4c5c990d344b754103b77b571e4" name="docs/example_4.php" role="doc" />
+   <file baseinstalldir="/" md5sum="c73aa61cf3768876de63134621b4ec73" name="docs/templates/example_1.html" role="doc" />
+   <file baseinstalldir="/" md5sum="611d8ffadff7a34221e06f1256e9093d" name="docs/templates/example_2.html" role="doc" />
+   <file baseinstalldir="/" md5sum="a215039ffd864141c9899bd1e8226f47" name="docs/templates/example_3.html" role="doc" />
+   <file baseinstalldir="/" md5sum="c08c9adbd1875e61ce6a1c101d897f23" name="docs/templates/example_3_add.html" role="doc" />
+   <file baseinstalldir="/" md5sum="268bb32ea6c4da9022ece99d0e19d778" name="docs/templates/example_3_include.html" role="doc" />
+   <file baseinstalldir="/" md5sum="f056556a005b4df22f0ba68292e0362f" name="docs/templates/example_3_replace_1.html" role="doc" />
+   <file baseinstalldir="/" md5sum="8ab37c7241e4cbdd133f1fb7ab4e8a8a" name="docs/templates/example_3_replace_2.html" role="doc" />
+   <file baseinstalldir="/" md5sum="f65c179ad69f91f6cc4c65328a34232d" name="docs/templates/example_4.html" role="doc" />
+   <file baseinstalldir="/" md5sum="d1b5a493c9a4510d7e740fecc4366578" name="HTML/Template/Sigma.php" role="php" />
+   <file baseinstalldir="/" md5sum="8e35f9dfc2a13c41afffedb92ea07ad2" name="tests/AllTests.php" role="test" />
+   <file baseinstalldir="/" md5sum="b8b26b4e7d12c439d720b54f6f718852" name="tests/Sigma_api_testcase.php" role="test" />
+   <file baseinstalldir="/" md5sum="4ba8f3654d23a5d16150cf981c10acdc" name="tests/Sigma_bug_testcase.php" role="test" />
+   <file baseinstalldir="/" md5sum="7d478425be10de04d2d1a3a12a08e144" name="tests/Sigma_cache_testcase.php" role="test" />
+   <file baseinstalldir="/" md5sum="26391963e0217e96e169ad6beae28368" name="tests/Sigma_usage_testcase.php" role="test" />
+   <file baseinstalldir="/" md5sum="bca97392b741f553d10203f04549a423" name="tests/templates/addblock.html" role="test" />
+   <file baseinstalldir="/" md5sum="d4e1caf0b07b85e49e0e82ab83e91ed3" name="tests/templates/blockiteration.html" role="test" />
+   <file baseinstalldir="/" md5sum="aa11dc0ba8c94c71f0ed6e448770f913" name="tests/templates/blocks.html" role="test" />
+   <file baseinstalldir="/" md5sum="d1eb1470f7bacf2919c1cc5794b3625a" name="tests/templates/callback.html" role="test" />
+   <file baseinstalldir="/" md5sum="daeb5afea09cd73a89488d267268ccd1" name="tests/templates/globals.html" role="test" />
+   <file baseinstalldir="/" md5sum="8ac12c5d1c85787dd44ed5c93a392dfe" name="tests/templates/include.html" role="test" />
+   <file baseinstalldir="/" md5sum="bd4c99366021b8bd88ba220ec829eae5" name="tests/templates/loadtemplatefile.html" role="test" />
+   <file baseinstalldir="/" md5sum="a3d70ab52bdb9f3c14702879865a55d6" name="tests/templates/replaceblock.html" role="test" />
+   <file baseinstalldir="/" md5sum="fb1681e6ffa470d92859fac3496b960e" name="tests/templates/__include.html" role="test" />
   </dir>
  </contents>
  <dependencies>
@@ -369,6 +356,27 @@ their initial implementation)
  * Added new builtin callbacks &apos;e&apos; and &apos;r&apos; for htmlentities() and 
    rawurlencode(), respectively
  * Added the &apos;charset&apos; option for builtin &apos;h&apos; and &apos;e&apos; callbacks
+   </notes>
+  </release>
+  <release>
+   <version>
+    <release>1.2.1</release>
+    <api>1.2.0</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2010-10-25</date>
+   <license uri="http://www.php.net/license">PHP License</license>
+   <notes>
+Automatically built QA release
+Req #12221 template comments, a new option &apos;charset&apos; and 2 new buildin
+functions - avb
+
+Doc #13379 INCLUDE directive ignored when using setTemplate - avb
+
+Doc #14691 User note that is a documentation problem - avb
    </notes>
   </release>
  </changelog>
