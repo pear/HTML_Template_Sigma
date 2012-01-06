@@ -24,7 +24,7 @@ if (!defined('PHPUnit_MAIN_METHOD')) {
     define('PHPUnit_MAIN_METHOD', 'HTML_Template_Sigma_AllTests::main');
 }
 
-require_once 'PHPUnit/TextUI/TestRunner.php';
+require_once 'PHPUnit/Autoload.php';
 
 /**
  * Class for file / directory manipulation from PEAR package
