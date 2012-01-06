@@ -453,6 +453,15 @@ class Sigma_api_TestCase extends PHPUnit_Framework_TestCase
         $this->assertEquals('A template', $this->tpl->get());
     }
 
+    /**
+     * NOTE: if this test fails, it could be a couple of things:
+     *
+     * 1) The result depends on the encoding of this script being ISO-8859-1.
+     * Check it with "file -ib".  If conversion is needed, use
+     * "iconv -f <output of file -bi> -t ISO-8859-1 <oldfile> <newfile>"
+     *
+     * 2) PHP 5.4 has a change/bug: https://bugs.php.net/bug.php?id=60675
+     */
     function testOptionCharset()
     {
         $this->tpl->setOption('charset', 'windows-1251');
