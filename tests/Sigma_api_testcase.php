@@ -464,6 +464,9 @@ class Sigma_api_TestCase extends PHPUnit_Framework_TestCase
      */
     function testOptionCharset()
     {
+        if (version_compare(PHP_VERSION, '5.4', '>=')) {
+            $this->markTestSkipped('PHP 5.4 now only encodes using _character_ entities.');
+        }
         $this->tpl->setOption('charset', 'windows-1251');
         $this->tpl->setTemplate('{var:e}');
         $this->tpl->setVariable('var', 'Тестируем');
