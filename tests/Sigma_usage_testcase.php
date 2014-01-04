@@ -45,12 +45,7 @@ class Sigma_Usage_TestCase extends PHPUnit_Framework_TestCase
     function setUp()
     {
         $className = 'HTML_Template_' . $GLOBALS['_HTML_Template_Sigma_IT_class'];
-        $this->tpl =& new $className(dirname(__FILE__) . '/templates');
-    }
-
-    function tearDown()
-    {
-        unset($this->tpl);
+        $this->tpl = new $className(dirname(__FILE__) . '/templates');
     }
 
     function _stripWhitespace($str)
@@ -82,7 +77,7 @@ class Sigma_Usage_TestCase extends PHPUnit_Framework_TestCase
         );
 
         $result = $this->tpl->loadTemplateFile('blockiteration.html', true, true);
-        if (PEAR::isError($result)) {
+        if (is_a($result, 'PEAR_Error')) {
             $this->assertTrue(false, 'Error loading template file: '. $result->getMessage());
         }
         foreach ($data as $value) {
@@ -108,7 +103,7 @@ class Sigma_Usage_TestCase extends PHPUnit_Framework_TestCase
     {
         $data = array('a','b','c','d','e');
         $result = $this->tpl->loadTemplateFile('blockiteration.html', true, true);
-        if (PEAR::isError($result)) {
+        if (is_a($result, 'PEAR_Error')) {
             $this->assertTrue(false, 'Error loading template file: '. $result->getMessage());
         }
         for ($i = 0; $i < count($data); $i++) {
@@ -132,7 +127,7 @@ class Sigma_Usage_TestCase extends PHPUnit_Framework_TestCase
         }
         $data = array('a','b','c','d','e');
         $result = $this->tpl->loadTemplateFile('blockiteration.html', true, true);
-        if (PEAR::isError($result)) {
+        if (is_a($result, 'PEAR_Error')) {
             $this->assertTrue(false, 'Error loading template file: '. $result->getMessage());
         }
         for ($i = 0; $i < count($data); $i++) {

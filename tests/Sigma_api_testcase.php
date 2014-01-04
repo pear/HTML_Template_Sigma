@@ -45,12 +45,7 @@ class Sigma_api_TestCase extends PHPUnit_Framework_TestCase
     function setUp()
     {
         $className = 'HTML_Template_' . $GLOBALS['_HTML_Template_Sigma_IT_class'];
-        $this->tpl =& new $className(dirname(__FILE__) . '/templates');
-    }
-
-    function tearDown()
-    {
-        unset($this->tpl);
+        $this->tpl = new $className(dirname(__FILE__) . '/templates');
     }
 
     function _stripWhitespace($str)
@@ -74,7 +69,7 @@ class Sigma_api_TestCase extends PHPUnit_Framework_TestCase
     function testSetTemplate()
     {
         $result = $this->tpl->setTemplate('A template', false, false);
-        if (PEAR::isError($result)) {
+        if (is_a($result, 'PEAR_Error')) {
             $this->assertTrue(false, 'Error setting template: '. $result->getMessage());
         }
         $this->assertEquals('A template', $this->tpl->get());
@@ -87,7 +82,7 @@ class Sigma_api_TestCase extends PHPUnit_Framework_TestCase
     function testLoadTemplatefile()
     {
         $result = $this->tpl->loadTemplatefile('loadtemplatefile.html', false, false);
-        if (PEAR::isError($result)) {
+        if (is_a($result, 'PEAR_Error')) {
             $this->assertTrue(false, 'Error loading template file: '. $result->getMessage());
         }
         $this->assertEquals('A template', trim($this->tpl->get()));
@@ -100,7 +95,7 @@ class Sigma_api_TestCase extends PHPUnit_Framework_TestCase
     function testSetVariable()
     {
         $result = $this->tpl->setTemplate('{placeholder1} {placeholder2} {placeholder3}', true, true);
-        if (PEAR::isError($result)) {
+        if (is_a($result, 'PEAR_Error')) {
             $this->assertTrue(false, 'Error setting template: '. $result->getMessage());
         }
         // "scalar" call
@@ -120,7 +115,7 @@ class Sigma_api_TestCase extends PHPUnit_Framework_TestCase
     function testExtendedSetVariale()
     {
         $result = $this->tpl->setTemplate('{index1.0} {index1.subindex1} {index1.subindex2.0}', true, true);
-        if (PEAR::isError($result)) {
+        if (is_a($result, 'PEAR_Error')) {
             $this->assertTrue(false, 'Error setting template: '. $result->getMessage());
         }
         $this->tpl->setVariable('index1', array(
@@ -140,7 +135,7 @@ class Sigma_api_TestCase extends PHPUnit_Framework_TestCase
     function testInclude()
     {
         $result = $this->tpl->loadTemplateFile('include.html', false, false);
-        if (PEAR::isError($result)) {
+        if (is_a($result, 'PEAR_Error')) {
             $this->assertTrue(false, 'Error loading template file: '. $result->getMessage());
         }
         $this->assertEquals('Master file; Included file', trim($this->tpl->get()));
@@ -149,7 +144,7 @@ class Sigma_api_TestCase extends PHPUnit_Framework_TestCase
     function testCurrentBlock()
     {
         $result = $this->tpl->loadTemplateFile('blockiteration.html', true, true);
-        if (PEAR::isError($result)) {
+        if (is_a($result, 'PEAR_Error')) {
             $this->assertTrue(false, 'Error loading template file: '. $result->getMessage());
         }
         $this->tpl->setVariable('outer', 'a');
@@ -164,7 +159,7 @@ class Sigma_api_TestCase extends PHPUnit_Framework_TestCase
     function testRemovePlaceholders()
     {
         $result = $this->tpl->setTemplate('{placeholder1},{placeholder2},{placeholder3},{placeholder4.index}', true, true);
-        if (PEAR::isError($result)) {
+        if (is_a($result, 'PEAR_Error')) {
             $this->assertTrue(false, 'Error setting template: '. $result->getMessage());
         }
         // we do not set {placeholder3}
@@ -176,7 +171,7 @@ class Sigma_api_TestCase extends PHPUnit_Framework_TestCase
 
         // Default behaviour is to remove {stuff} from data as well
         $result = $this->tpl->setTemplate('{placeholder1},{placeholder2},{placeholder3}', true, true);
-        if (PEAR::isError($result)) {
+        if (is_a($result, 'PEAR_Error')) {
             $this->assertTrue(false, 'Error setting template: '. $result->getMessage());
         }
         $this->tpl->setVariable(array(
@@ -190,7 +185,7 @@ class Sigma_api_TestCase extends PHPUnit_Framework_TestCase
     function testTouchBlock()
     {
         $result = $this->tpl->loadTemplateFile('blockiteration.html', false, true);
-        if (PEAR::isError($result)) {
+        if (is_a($result, 'PEAR_Error')) {
             $this->assertTrue(false, 'Error loading template file: '. $result->getMessage());
         }
         $this->tpl->setVariable('outer', 'data');
@@ -205,7 +200,7 @@ class Sigma_api_TestCase extends PHPUnit_Framework_TestCase
             return;
         }
         $result = $this->tpl->loadTemplateFile('blockiteration.html', false, true);
-        if (PEAR::isError($result)) {
+        if (is_a($result, 'PEAR_Error')) {
             $this->assertTrue(false, 'Error loading template file: '. $result->getMessage());
         }
         $this->tpl->setVariable(array(
@@ -223,7 +218,7 @@ class Sigma_api_TestCase extends PHPUnit_Framework_TestCase
             return;
         }
         $result = $this->tpl->loadTemplateFile('globals.html', false, true);
-        if (PEAR::isError($result)) {
+        if (is_a($result, 'PEAR_Error')) {
             $this->assertTrue(false, 'Error loading template file: '. $result->getMessage());
         }
         $this->tpl->setGlobalVariable('glob', 'glob');
@@ -282,7 +277,7 @@ class Sigma_api_TestCase extends PHPUnit_Framework_TestCase
     function testAddBlock()
     {
         $result = $this->tpl->loadTemplatefile('blocks.html', true, true);
-        if (PEAR::isError($result)) {
+        if (is_a($result, 'PEAR_Error')) {
             $this->assertTrue(false, 'Error loading template file: '. $result->getMessage());
         }
         $this->tpl->addBlock('var', 'added', 'added:{new_var}');
@@ -295,11 +290,11 @@ class Sigma_api_TestCase extends PHPUnit_Framework_TestCase
     function testAddBlockfile()
     {
         $result = $this->tpl->loadTemplatefile('blocks.html', true, true);
-        if (PEAR::isError($result)) {
+        if (is_a($result, 'PEAR_Error')) {
             $this->assertTrue(false, 'Error loading template file: '. $result->getMessage());
         }
         $result = $this->tpl->addBlockfile('var', 'added', 'addblock.html');
-        if (PEAR::isError($result)) {
+        if (is_a($result, 'PEAR_Error')) {
             $this->assertTrue(false, 'Error adding block from file: '. $result->getMessage());
         }
         $this->assertTrue($this->tpl->blockExists('added'), 'The new block seems to be missing');
@@ -311,7 +306,7 @@ class Sigma_api_TestCase extends PHPUnit_Framework_TestCase
     function testReplaceBlock()
     {
         $result = $this->tpl->loadTemplatefile('blocks.html', true, true);
-        if (PEAR::isError($result)) {
+        if (is_a($result, 'PEAR_Error')) {
             $this->assertTrue(false, 'Error loading template file: '. $result->getMessage());
         }
         $this->tpl->setVariable('old_var', 'old_value');
@@ -331,14 +326,14 @@ class Sigma_api_TestCase extends PHPUnit_Framework_TestCase
     function testReplaceBlockfile()
     {
         $result = $this->tpl->loadTemplatefile('blocks.html', true, true);
-        if (PEAR::isError($result)) {
+        if (is_a($result, 'PEAR_Error')) {
             $this->assertTrue(false, 'Error loading template file: '. $result->getMessage());
         }
         $this->tpl->setVariable('old_var', 'old_value');
         $this->tpl->parse('old_block');
         // old_block's contents should be discarded
         $result = $this->tpl->replaceBlockfile('old_block', 'replaceblock.html', false);
-        if (PEAR::isError($result)) {
+        if (is_a($result, 'PEAR_Error')) {
             $this->assertTrue(false, 'Error replacing block from file: '. $result->getMessage());
         }
         $this->assertTrue(!$this->tpl->blockExists('old_inner_block') && !$this->tpl->placeholderExists('old_var'),
@@ -350,7 +345,7 @@ class Sigma_api_TestCase extends PHPUnit_Framework_TestCase
         $this->tpl->parse('old_block');
         // this time old_block's contents should be preserved
         $result = $this->tpl->replaceBlockfile('old_block', 'addblock.html', true);
-        if (PEAR::isError($result)) {
+        if (is_a($result, 'PEAR_Error')) {
             $this->assertTrue(false, 'Error replacing block from file: '. $result->getMessage());
         }
         $this->tpl->setVariable('new_var', 'again');
@@ -360,7 +355,7 @@ class Sigma_api_TestCase extends PHPUnit_Framework_TestCase
     function testCallback()
     {
         $result = $this->tpl->loadTemplatefile('callback.html', true, true);
-        if (PEAR::isError($result)) {
+        if (is_a($result, 'PEAR_Error')) {
             $this->assertTrue(false, 'Error loading template file: '. $result->getMessage());
         }
         $this->tpl->setVariable('username', 'luser');
@@ -398,7 +393,7 @@ class Sigma_api_TestCase extends PHPUnit_Framework_TestCase
         );
 
         $result = $this->tpl->loadTemplatefile('blockiteration.html', true, true);
-        if (PEAR::isError($result)) {
+        if (is_a($result, 'PEAR_Error')) {
             $this->assertTrue(false, 'Error loading template file: '. $result->getMessage());
         }
         $this->assertEquals($tree, $this->tpl->getBlockList('__global__', true));
@@ -408,7 +403,7 @@ class Sigma_api_TestCase extends PHPUnit_Framework_TestCase
     function testGetPlaceholderList()
     {
         $result = $this->tpl->loadTemplatefile('blockiteration.html', true, true);
-        if (PEAR::isError($result)) {
+        if (is_a($result, 'PEAR_Error')) {
             $this->assertTrue(false, 'Error loading template file: '. $result->getMessage());
         }
         $this->assertEquals(array('outer'), $this->tpl->getPlaceholderList('outer_block'));

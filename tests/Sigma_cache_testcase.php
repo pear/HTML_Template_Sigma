@@ -42,7 +42,7 @@ class Sigma_cache_TestCase extends Sigma_api_TestCase
     function setUp()
     {
         $className = 'HTML_Template_' . $GLOBALS['_HTML_Template_Sigma_IT_class'];
-        $this->tpl =& new $className(
+        $this->tpl = new $className(
             dirname(__FILE__) . '/templates', $GLOBALS['_HTML_Template_Sigma_cache_dir']
         );
     }
