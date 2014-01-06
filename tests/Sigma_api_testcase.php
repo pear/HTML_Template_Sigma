@@ -415,7 +415,7 @@ class Sigma_api_TestCase extends PHPUnit_Framework_TestCase
         $this->tpl->setCallbackFunction('uppercase', 'strtoupper');
         $this->tpl->setVariable('var', '"m&m" ');
         $this->tpl->setVariable('arrayVar', array('"m&m"', 'index' => '"m&m"'));
-        $this->assertEquals('"m&m" |&quot;m&amp;m&quot; |%22m%26m%22+|\\"m&m\\" |%22m%26m%22%20|&quot;m&amp;m&quot; |"M&M" |\\"m&m\\"|"M&M"', $this->tpl->get());
+        $this->assertEquals('"m&m" |&quot;m&amp;m&quot; |%22m%26m%22+|\\x22m&m\\x22 |%22m%26m%22%20|&quot;m&amp;m&quot; |"M&M" |\\x22m&m\\x22|"M&M"', $this->tpl->get());
     }
 
     function testClearVariables()

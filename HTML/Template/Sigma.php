@@ -1949,8 +1949,8 @@ class HTML_Template_Sigma extends PEAR
         return strtr(
             $value,
             array(
-                "\r" => '\r', "'"  => "\\'", "\n" => '\n',
-                '"'  => '\"', "\t" => '\t',  '\\' => '\\\\'
+                "\r" => '\r',    "'"  => "\\x27", "\n" => '\n',
+                '"'  => '\\x22', "\t" => '\t',    '\\' => '\\\\'
             )
         );
     }
