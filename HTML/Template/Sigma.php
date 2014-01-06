@@ -486,8 +486,8 @@ class HTML_Template_Sigma extends PEAR
     /**
      * Returns a textual error message for an error code
      *
-     * @param integer $code error code
-     * @param string  $data additional data to insert into message
+     * @param integer|PEAR_Error $code error code or another error object for code reuse
+     * @param string             $data additional data to insert into message
      *
      * @access public
      * @return string error message
@@ -513,7 +513,7 @@ class HTML_Template_Sigma extends PEAR
             );
         }
 
-        if (PEAR::isError($code)) {
+        if (is_a($code, 'PEAR_Error')) {
             $code = $code->getCode();
         }
         if (!isset($errorMessages[$code])) {
@@ -893,7 +893,7 @@ class HTML_Template_Sigma extends PEAR
             preg_replace($this->commentRegExp, '', $template) .
             '<!-- END __global__ -->'
         );
-        if (PEAR::isError($list)) {
+        if (is_a($list, 'PEAR_Error')) {
             return $list;
         }
         return $this->_buildBlockVariables();
@@ -922,9 +922,8 @@ class HTML_Template_Sigma extends PEAR
             $this->_resetTemplate($removeUnknownVariables, $removeEmptyBlocks);
             return $this->_getCached($filename);
         }
-        $template = $this->_getFile($this->fileRoot . $filename);
-        if (PEAR::isError($template)) {
-            return $template;
+        if (false === ($template = @file_get_contents($this->fileRoot . $filename))) {
+            return $this->raiseError($this->errorMessage(SIGMA_TPL_NOT_FOUND, $filename), SIGMA_TPL_NOT_FOUND);
         }
         $this->_triggers     = array();
         $this->_triggerBlock = '__global__';
@@ -979,7 +978,7 @@ class HTML_Template_Sigma extends PEAR
             preg_replace($this->commentRegExp, '', $template) .
             "<!-- END $block -->"
         );
-        if (PEAR::isError($list)) {
+        if (is_a($list, 'PEAR_Error')) {
             return $list;
         }
         $this->_replacePlaceholder($parents[0], $placeholder, $block);
@@ -1005,9 +1004,8 @@ class HTML_Template_Sigma extends PEAR
         if ($this->_isCached($filename)) {
             return $this->_getCached($filename, $block, $placeholder);
         }
-        $template = $this->_getFile($this->fileRoot . $filename);
-        if (PEAR::isError($template)) {
-            return $template;
+        if (false === ($template = @file_get_contents($this->fileRoot . $filename))) {
+            return $this->raiseError($this->errorMessage(SIGMA_TPL_NOT_FOUND, $filename), SIGMA_TPL_NOT_FOUND);
         }
         list($oldTriggerBlock, $this->_triggerBlock) = array($this->_triggerBlock, $block);
         $template = preg_replace_callback($this->includeRegExp, array(&$this, '_makeTrigger'), $template);
@@ -1056,7 +1054,7 @@ class HTML_Template_Sigma extends PEAR
             preg_replace($this->commentRegExp, '', $template) .
             "<!-- END $block -->"
         );
-        if (PEAR::isError($list)) {
+        if (is_a($list, 'PEAR_Error')) {
             return $list;
         }
         // renew the variables list
@@ -1079,15 +1077,15 @@ class HTML_Template_Sigma extends PEAR
     function replaceBlockfile($block, $filename, $keepContent = false)
     {
         if ($this->_isCached($filename)) {
-            if (PEAR::isError($res = $this->_removeBlockData($block, $keepContent))) {
+            $res = $this->_removeBlockData($block, $keepContent);
+            if (is_a($res, 'PEAR_Error')) {
                 return $res;
             } else {
                 return $this->_getCached($filename, $block);
             }
         }
-        $template = $this->_getFile($this->fileRoot . $filename);
-        if (PEAR::isError($template)) {
-            return $template;
+        if (false === ($template = @file_get_contents($this->fileRoot . $filename))) {
+            return $this->raiseError($this->errorMessage(SIGMA_TPL_NOT_FOUND, $filename), SIGMA_TPL_NOT_FOUND);
         }
         list($oldTriggerBlock, $this->_triggerBlock) = array($this->_triggerBlock, $block);
         $template = preg_replace_callback($this->includeRegExp, array(&$this, '_makeTrigger'), $template);
@@ -1306,24 +1304,6 @@ class HTML_Template_Sigma extends PEAR
         return $ret;
     }
 
-    /**
-     * Reads the file and returns its content
-     *
-     * @param string $filename filename
-     *
-     * @access private
-     * @return string file content (or error object)
-     */
-    function _getFile($filename)
-    {
-        if (!($fh = @fopen($filename, 'rb'))) {
-            return $this->raiseError($this->errorMessage(SIGMA_TPL_NOT_FOUND, $filename), SIGMA_TPL_NOT_FOUND);
-        }
-        $content = fread($fh, max(1, filesize($filename)));
-        fclose($fh);
-        return $content;
-    }
-
 
     /**
      * Recursively builds a list of all variables within a block.
@@ -1399,7 +1379,7 @@ class HTML_Template_Sigma extends PEAR
                 $this->_blocks[$blockname] = $blockcontent;
                 $blocks[$blockname] = true;
                 $inner              = $this->_buildBlocks($blockcontent);
-                if (PEAR::isError($inner)) {
+                if (is_a($inner, 'PEAR_Error')) {
                     return $inner;
                 }
                 foreach ($inner as $name => $v) {
@@ -1499,9 +1479,10 @@ class HTML_Template_Sigma extends PEAR
                 );
             }
         }
-        $content = $this->_getFile($this->_cachedName($filename));
-        if (PEAR::isError($content)) {
-            return $content;
+        if (false === ($content = @file_get_contents($this->_cachedName($filename)))) {
+            return $this->raiseError(
+                $this->errorMessage(SIGMA_TPL_NOT_FOUND, $this->_cachedName($filename)), SIGMA_TPL_NOT_FOUND
+            );
         }
         $cache = unserialize($content);
         if ('__global__' != $block) {
