@@ -347,10 +347,10 @@ class HTML_Template_Sigma extends PEAR
     var $_callback = array();
 
     /**
-     * RegExp used to find file inclusion calls in the template (should have 'e' modifier)
+     * RegExp used to find file inclusion calls in the template
      * @var  string
      */
-    var $includeRegExp = '#<!--\s+INCLUDE\s+(\S+)\s+-->#ime';
+    var $includeRegExp = '#<!--\s+INCLUDE\s+(\S+)\s+-->#im';
 
     /**
      * RegExp used to find (and remove) comments in the template
@@ -365,6 +365,12 @@ class HTML_Template_Sigma extends PEAR
      */
     var $_triggers = array();
 
+    /**
+     * Name of the block to use in _makeTrigger() (see bug #20068)
+     * @var string
+     * @access private
+     */
+    var $_triggerBlock = '__global__';
 
     /**
      * Constructor: builds some complex regular expressions and optionally
@@ -920,8 +926,9 @@ class HTML_Template_Sigma extends PEAR
         if (PEAR::isError($template)) {
             return $template;
         }
-        $this->_triggers = array();
-        $template = preg_replace($this->includeRegExp, "\$this->_makeTrigger('\\1', '__global__')", $template);
+        $this->_triggers     = array();
+        $this->_triggerBlock = '__global__';
+        $template = preg_replace_callback($this->includeRegExp, array(&$this, '_makeTrigger'), $template);
         if (SIGMA_OK !== ($res = $this->setTemplate($template, $removeUnknownVariables, $removeEmptyBlocks))) {
             return $res;
         } else {
@@ -1002,7 +1009,9 @@ class HTML_Template_Sigma extends PEAR
         if (PEAR::isError($template)) {
             return $template;
         }
-        $template = preg_replace($this->includeRegExp, "\$this->_makeTrigger('\\1', '{$block}')", $template);
+        list($oldTriggerBlock, $this->_triggerBlock) = array($this->_triggerBlock, $block);
+        $template = preg_replace_callback($this->includeRegExp, array(&$this, '_makeTrigger'), $template);
+        $this->_triggerBlock = $oldTriggerBlock;
         if (SIGMA_OK !== ($res = $this->addBlock($placeholder, $block, $template))) {
             return $res;
         } else {
@@ -1080,7 +1089,9 @@ class HTML_Template_Sigma extends PEAR
         if (PEAR::isError($template)) {
             return $template;
         }
-        $template = preg_replace($this->includeRegExp, "\$this->_makeTrigger('\\1', '{$block}')", $template);
+        list($oldTriggerBlock, $this->_triggerBlock) = array($this->_triggerBlock, $block);
+        $template = preg_replace_callback($this->includeRegExp, array(&$this, '_makeTrigger'), $template);
+        $this->_triggerBlock = $oldTriggerBlock;
         if (SIGMA_OK !== ($res = $this->replaceBlock($block, $template, $keepContent))) {
             return $res;
         } else {
@@ -1702,18 +1713,17 @@ class HTML_Template_Sigma extends PEAR
 
 
     /**
-     * Generates a placeholder to replace an <!-- INCLUDE filename --> statement
+     * Callback generating a placeholder to replace an <!-- INCLUDE filename --> statement
      *
-     * @param string $filename filename
-     * @param string $block    current block name
+     * @param array $matches Matches from preg_replace_callback() call
      *
      * @access private
      * @return string  a placeholder
      */
-    function _makeTrigger($filename, $block)
+    function _makeTrigger($matches)
     {
-        $name = 'trigger_' . substr(md5($filename . ' ' . uniqid($block)), 0, 10);
-        $this->_triggers[$block][$name] = $filename;
+        $name = 'trigger_' . substr(md5($matches[1] . ' ' . uniqid($this->_triggerBlock)), 0, 10);
+        $this->_triggers[$this->_triggerBlock][$name] = $matches[1];
         return $this->openingDelimiter . $name . $this->closingDelimiter;
     }
 
