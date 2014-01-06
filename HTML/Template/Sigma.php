@@ -323,7 +323,7 @@ class HTML_Template_Sigma extends PEAR
      * Function name RegExp
      * @var    string
      */
-    var $functionnameRegExp = '[_a-zA-Z]+[A-Za-z_0-9]*';
+    var $functionnameRegExp = '[_a-zA-Z][A-Za-z_0-9]*';
 
     /**
      * RegExp used to grep function calls in the template (set by the constructor)
@@ -1388,7 +1388,7 @@ class HTML_Template_Sigma extends PEAR
     {
         $blocks = array();
         if (preg_match_all($this->blockRegExp, $string, $regs, PREG_SET_ORDER)) {
-            foreach ($regs as $k => $match) {
+            foreach ($regs as $match) {
                 $blockname    = $match[1];
                 $blockcontent = $match[2];
                 if (isset($this->_blocks[$blockname]) || isset($blocks[$blockname])) {
@@ -1795,20 +1795,21 @@ class HTML_Template_Sigma extends PEAR
             $this->_blocks[$block] .= substr($template, 0, strpos($template, $regs[0]));
             $template = substr($template, strpos($template, $regs[0]) + strlen($regs[0]));
 
-            $state = 1;
+            $state    = 1;
+            $arg      = '';
+            $quote    = '';
             $funcData = array(
                 'name' => $regs[1],
                 'args' => array()
             );
             for ($i = 0, $len = strlen($template); $i < $len; $i++) {
-                $char = $template{$i};
+                $char = $template[$i];
                 switch ($state) {
                 case 0:
                 case -1:
                     break 2;
 
                 case 1:
-                    $arg = '';
                     if (')' == $char) {
                         $state = 0;
                     } elseif (',' == $char) {
