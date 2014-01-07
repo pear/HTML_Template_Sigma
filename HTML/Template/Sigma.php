@@ -1440,12 +1440,7 @@ class HTML_Template_Sigma extends PEAR
         $cachedName = $this->_cachedName($filename);
         $sourceName = $this->fileRoot . $filename;
         // if $sourceName does not exist, error will be thrown later
-        $sourceTime = @filemtime($sourceName);
-        if ((false !== $sourceTime) && @file_exists($cachedName) && (filemtime($cachedName) > $sourceTime)) {
-            return true;
-        } else {
-            return false;
-        }
+        return false !== ($sourceTime = @filemtime($sourceName)) && @filemtime($cachedName) === $sourceTime;
     } // _isCached
 
 
@@ -1568,6 +1563,7 @@ class HTML_Template_Sigma extends PEAR
             if (is_a($res, 'PEAR_Error')) {
                 return $res;
             }
+            @touch($cachedName, @filemtime($this->fileRoot . $filename));
         }
         // now pull triggers
         if (isset($this->_triggers[$block])) {
