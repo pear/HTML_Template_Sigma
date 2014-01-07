@@ -1564,11 +1564,10 @@ class HTML_Template_Sigma extends PEAR
             if (isset($this->_triggers[$block])) {
                 $cache['triggers'] = $this->_triggers[$block];
             }
-            if (!($fh = @fopen($cachedName, 'wb'))) {
-                return $this->raiseError($this->errorMessage(SIGMA_CACHE_ERROR, $cachedName), SIGMA_CACHE_ERROR);
+            $res = $this->_writeFileAtomically($cachedName, serialize($cache));
+            if (is_a($res, 'PEAR_Error')) {
+                return $res;
             }
-            fwrite($fh, serialize($cache));
-            fclose($fh);
         }
         // now pull triggers
         if (isset($this->_triggers[$block])) {
@@ -1580,6 +1579,60 @@ class HTML_Template_Sigma extends PEAR
         return SIGMA_OK;
     } // _writeCache
 
+    /**
+     * Atomically writes given content to a given file
+     *
+     * The method first creates a temporary file in the cache directory and
+     * then renames it to the final name. This should prevent creating broken
+     * cache files when there is no space left on device (bug #19220) or reading
+     * incompletely saved files in another process / thread.
+     *
+     * The same idea is used in Twig, Symfony's Filesystem component, etc.
+     *
+     * @param string $fileName Name of the file to write
+     * @param string $content  Content to write
+     *
+     * @access private
+     * @return mixed SIGMA_OK on success, error object on failure
+     * @link http://pear.php.net/bugs/bug.php?id=19220
+     */
+    function _writeFileAtomically($fileName, $content)
+    {
+        $dirName = dirname($fileName);
+        $tmpFile = tempnam($dirName, basename($fileName));
+
+        if (function_exists('file_put_contents')) {
+            if (false === @file_put_contents($tmpFile, $content)) {
+                return $this->raiseError($this->errorMessage(SIGMA_CACHE_ERROR, $fileName), SIGMA_CACHE_ERROR);
+            }
+
+        } else {
+            // Fall back to previous solution
+            if (!($fh = @fopen($tmpFile, 'wb'))) {
+                return $this->raiseError($this->errorMessage(SIGMA_CACHE_ERROR, $fileName), SIGMA_CACHE_ERROR);
+            }
+            if (!fwrite($fh, $content)) {
+                return $this->raiseError($this->errorMessage(SIGMA_CACHE_ERROR, $fileName), SIGMA_CACHE_ERROR);
+            }
+            fclose($fh);
+        }
+
+        if (!OS_WINDOWS || version_compare(phpversion(), '5.2.6', '>=')) {
+            if (@rename($tmpFile, $fileName)) {
+                return SIGMA_OK;
+            }
+
+        } else {
+            // rename() to an existing file will not work on Windows before PHP 5.2.6,
+            // so we need to copy, which isn't that atomic, but better than writing directly to $fileName
+            // https://bugs.php.net/bug.php?id=44805
+            if (@copy($tmpFile, $fileName) && @unlink($tmpFile)) {
+                return SIGMA_OK;
+            }
+        }
+
+        return $this->raiseError($this->errorMessage(SIGMA_CACHE_ERROR, $fileName), SIGMA_CACHE_ERROR);
+    }
 
     /**
      * Builds an array of template data to be saved in prepared template file
