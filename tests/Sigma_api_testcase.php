@@ -363,7 +363,7 @@ class Sigma_api_TestCase extends PHPUnit_Framework_TestCase
         $this->tpl->setCallbackFunction('russian', array(&$this, '_doRussian'), true);
         $this->tpl->setCallbackFunction('lowercase', 'strtolower');
         $this->tpl->setCallBackFunction('noarg', array(&$this, '_doCallback'));
-        $this->assertEquals('callback#word#HELLO,LUSER!#Ïðèâåò,luser!', $this->_stripWhitespace($this->tpl->get()));
+        $this->assertEquals('callback#word#HELLO,LUSER!#ÐŸÑ€Ð¸Ð²ÐµÑ‚,luser!', $this->_stripWhitespace($this->tpl->get()));
     }
 
     function _doCallback()
@@ -373,7 +373,7 @@ class Sigma_api_TestCase extends PHPUnit_Framework_TestCase
 
     function _doRussian($arg)
     {
-        $ary = array('Hello, {username}!' => 'Ïðèâåò, {username}!');
+        $ary = array('Hello, {username}!' => 'ÐŸÑ€Ð¸Ð²ÐµÑ‚, {username}!');
         return isset($ary[$arg])? $ary[$arg]: $arg;
     }
 
@@ -449,23 +449,14 @@ class Sigma_api_TestCase extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * NOTE: if this test fails, it could be a couple of things:
-     *
-     * 1) The result depends on the encoding of this script being ISO-8859-1.
-     * Check it with "file -ib".  If conversion is needed, use
-     * "iconv -f <output of file -bi> -t ISO-8859-1 <oldfile> <newfile>"
-     *
-     * 2) PHP 5.4 has a change/bug: https://bugs.php.net/bug.php?id=60675
+     * @link https://bugs.php.net/bug.php?id=60675
      */
     function testOptionCharset()
     {
-        if (version_compare(PHP_VERSION, '5.4', '>=')) {
-            $this->markTestSkipped('PHP 5.4 now only encodes using _character_ entities.');
-        }
-        $this->tpl->setOption('charset', 'windows-1251');
+        $this->tpl->setOption('charset', 'utf-8');
         $this->tpl->setTemplate('{var:e}');
-        $this->tpl->setVariable('var', 'Òåñòèðóåì');
-        $this->assertEquals('&#1058;&#1077;&#1089;&#1090;&#1080;&#1088;&#1091;&#1077;&#1084;', $this->tpl->get());
+        $this->tpl->setVariable('var', 'Â«TÃ¨stÃ¯ngÂ»');
+        $this->assertEquals('&laquo;T&egrave;st&iuml;ng&raquo;', $this->tpl->get());
     }
 }
 
