@@ -1,0 +1,31 @@
+{
+    "authors": [
+        {
+            "email": "avb@php.net",
+            "name": "Alexey Borzov",
+            "role": "Lead"
+        }
+    ],
+    "autoload": {
+        "psr-0": {
+            "HTML_Template_Sigma": "./"
+        }
+    },
+    "description": "A fork of Integrated Templates (PEAR HTML_Template_IT) with template \"compilation\" added",
+    "include-path": [
+        "./"
+    ],
+    "license": "PHP License",
+    "name": "pear/html_template_sigma",
+    "support": {
+        "issues": "http://pear.php.net/bugs/search.php?cmd=display&package_name[]=HTML_Template_Sigma",
+        "source": "https://github.com/pear/HTML_Template_Sigma"
+    },
+    "type": "library",
+    "require": {
+        "pear/pear_exception": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "*"
+    }
+}
