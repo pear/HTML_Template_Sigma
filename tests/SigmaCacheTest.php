@@ -19,12 +19,7 @@
  * @link        http://pear.php.net/package/HTML_Template_Sigma
  * @ignore
  */
-
-/**
- * Test case for class API
- */
-require_once dirname(__FILE__) . '/Sigma_api_testcase.php';
-
+require_once 'HTML/Template/Sigma.php';
 /**
  * Test case for cache functionality
  *
@@ -37,13 +32,14 @@ require_once dirname(__FILE__) . '/Sigma_api_testcase.php';
  * @version     @package_version@
  * @ignore
  */
-class Sigma_cache_TestCase extends Sigma_api_TestCase
+class SigmaCacheTest extends SigmaApiTest
 {
     function setUp()
     {
-        $className = 'HTML_Template_' . $GLOBALS['_HTML_Template_Sigma_IT_class'];
-        $this->tpl = new $className(
-            dirname(__FILE__) . '/templates', $GLOBALS['_HTML_Template_Sigma_cache_dir']
+        require_once 'System.php';
+        $cache_dir = System::mktemp('-d sigma');
+        $this->tpl = new HTML_Template_Sigma(
+            dirname(__FILE__) . '/templates', $cache_dir
         );
     }
 
@@ -128,4 +124,3 @@ class Sigma_cache_TestCase extends Sigma_api_TestCase
         parent::testCallback();
     }
 }
-?>

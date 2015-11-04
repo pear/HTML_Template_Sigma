@@ -39,8 +39,7 @@ class SigmaUsageTest extends PHPUnit_Framework_TestCase
 
     function setUp()
     {
-        $className = 'HTML_Template_' . $GLOBALS['_HTML_Template_Sigma_IT_class'];
-        $this->tpl = new $className(dirname(__FILE__) . '/templates');
+        $this->tpl = new HTML_Template_Sigma(dirname(__FILE__) . '/templates');
     }
 
     function _stripWhitespace($str)
