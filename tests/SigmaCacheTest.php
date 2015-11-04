@@ -37,7 +37,8 @@ class SigmaCacheTest extends SigmaApiTest
     function setUp()
     {
         require_once 'System.php';
-        $cache_dir = System::mktemp('-d sigma');
+        $sys = new System();
+        $cache_dir = $sys->mktemp('-d sigma');
         $this->tpl = new HTML_Template_Sigma(
             dirname(__FILE__) . '/templates', $cache_dir
         );
