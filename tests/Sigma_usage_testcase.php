@@ -21,11 +21,6 @@
  */
 
 /**
- * PHPUnit Test Case
- */
-require_once 'PHPUnit/Framework/TestCase.php';
-
-/**
  * Test case for common package usage patterns
  *
  * @category    HTML
