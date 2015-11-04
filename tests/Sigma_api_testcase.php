@@ -29,7 +29,7 @@
  * @version     @package_version@
  * @ignore
  */
-class Sigma_api_TestCase extends PHPUnit_Framework_TestCase
+class SigmaApiTest extends PHPUnit_Framework_TestCase
 {
    /**
     * A template object

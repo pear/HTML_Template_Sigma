@@ -29,7 +29,7 @@
  * @version     @package_version@
  * @ignore
  */
-class Sigma_Usage_TestCase extends PHPUnit_Framework_TestCase
+class SigmaUsageTest extends PHPUnit_Framework_TestCase
 {
    /**
     * A template object

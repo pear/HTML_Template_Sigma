@@ -29,7 +29,7 @@
  * @version     @package_version@
  * @ignore
  */
-class Sigma_bug_testcase extends PHPUnit_Framework_TestCase
+class SigmaBugTest extends PHPUnit_Framework_TestCase
 {
    /**
     * A template object
@@ -63,4 +63,3 @@ class Sigma_bug_testcase extends PHPUnit_Framework_TestCase
         $this->assertEquals('A template', trim($this->tpl->get()));
     }
 }
-?>
