@@ -29,7 +29,7 @@
  * @version     @package_version@
  * @ignore
  */
-class SigmaBugTest extends PHPUnit_Framework_TestCase
+class SigmaBugTest extends \PHPUnit\Framework\TestCase
 {
    /**
     * A template object
@@ -37,7 +37,7 @@ class SigmaBugTest extends PHPUnit_Framework_TestCase
     */
     var $tpl;
 
-    function setUp()
+    protected function setUp(): void
     {
         $this->tpl = new HTML_Template_Sigma(dirname(__FILE__) . '/templates');
     }

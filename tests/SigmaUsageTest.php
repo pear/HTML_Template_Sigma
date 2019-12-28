@@ -29,7 +29,7 @@
  * @version     @package_version@
  * @ignore
  */
-class SigmaUsageTest extends PHPUnit_Framework_TestCase
+class SigmaUsageTest extends \PHPUnit\Framework\TestCase
 {
    /**
     * A template object
@@ -37,7 +37,7 @@ class SigmaUsageTest extends PHPUnit_Framework_TestCase
     */
     var $tpl;
 
-    function setUp()
+    protected function setUp(): void
     {
         $this->tpl = new HTML_Template_Sigma(dirname(__FILE__) . '/templates');
     }
@@ -138,4 +138,3 @@ class SigmaUsageTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('a#b|2#c#d|4#e#', $this->_stripWhitespace($this->tpl->get()));
     }
 }
-?>

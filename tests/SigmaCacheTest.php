@@ -34,7 +34,7 @@ require_once 'HTML/Template/Sigma.php';
  */
 class SigmaCacheTest extends SigmaApiTest
 {
-    function setUp()
+    protected function setUp(): void
     {
         require_once 'System.php';
         $sys = new System();

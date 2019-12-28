@@ -384,7 +384,7 @@ class HTML_Template_Sigma extends PEAR
      *
      * @see   setRoot(), setCacheRoot()
      */
-    function HTML_Template_Sigma($root = '', $cacheRoot = '')
+    function __construct($root = '', $cacheRoot = '')
     {
         // the class is inherited from PEAR to be able to use $this->setErrorHandling()
         $this->PEAR();
@@ -2013,4 +2013,3 @@ class HTML_Template_Sigma extends PEAR
         return htmlentities($value, ENT_COMPAT, $this->_options['charset']);
     }
 }
-?>

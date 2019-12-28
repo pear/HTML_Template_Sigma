@@ -29,7 +29,7 @@
  * @version     @package_version@
  * @ignore
  */
-class SigmaApiTest extends PHPUnit_Framework_TestCase
+class SigmaApiTest extends \PHPUnit\Framework\TestCase
 {
    /**
     * A template object
@@ -37,7 +37,7 @@ class SigmaApiTest extends PHPUnit_Framework_TestCase
     */
     var $tpl;
 
-    function setUp()
+    protected function setUp(): void
     {
         $this->tpl = new HTML_Template_Sigma(dirname(__FILE__) . '/templates');
     }
@@ -454,4 +454,3 @@ class SigmaApiTest extends PHPUnit_Framework_TestCase
     }
 }
 
-?>
