@@ -136,7 +136,7 @@ class HTML_Template_Sigma extends PEAR
      * @access   public
      * @see      $closingDelimiter, $blocknameRegExp, $variablenameRegExp
      */
-    var $openingDelimiter = '{';
+    public $openingDelimiter = '{';
 
     /**
      * Last character of a variable placeholder ( {VARIABLE_}_ )
@@ -144,7 +144,7 @@ class HTML_Template_Sigma extends PEAR
      * @access   public
      * @see      $openingDelimiter, $blocknameRegExp, $variablenameRegExp
      */
-    var $closingDelimiter = '}';
+    public $closingDelimiter = '}';
 
     /**
      * RegExp for matching the block names in the template.
@@ -154,7 +154,7 @@ class HTML_Template_Sigma extends PEAR
      * @access   public
      * @see      $variablenameRegExp, $openingDelimiter, $closingDelimiter
      */
-    var $blocknameRegExp = '[0-9A-Za-z_-]+';
+    public $blocknameRegExp = '[0-9A-Za-z_-]+';
 
     /**
      * RegExp matching a variable placeholder in the template.
@@ -164,47 +164,47 @@ class HTML_Template_Sigma extends PEAR
      * @access   public
      * @see      $blocknameRegExp, $openingDelimiter, $closingDelimiter
      */
-    var $variablenameRegExp = '[0-9A-Za-z._-]+';
+    public $variablenameRegExp = '[0-9A-Za-z._-]+';
 
     /**
      * RegExp used to find variable placeholder, filled by the constructor
      * @var      string    Looks somewhat like @(delimiter varname delimiter)@
      * @see      HTML_Template_Sigma()
      */
-    var $variablesRegExp = '';
+    public $variablesRegExp = '';
 
     /**
      * RegExp used to strip unused variable placeholders
      * @see      $variablesRegExp, HTML_Template_Sigma()
      */
-    var $removeVariablesRegExp = '';
+    public $removeVariablesRegExp = '';
 
     /**
      * RegExp used to find blocks and their content, filled by the constructor
      * @var      string
      * @see      HTML_Template_Sigma()
      */
-    var $blockRegExp = '';
+    public $blockRegExp = '';
 
     /**
      * Controls the handling of unknown variables, default is remove
      * @var      boolean
      * @access   public
      */
-    var $removeUnknownVariables = true;
+    public $removeUnknownVariables = true;
 
     /**
      * Controls the handling of empty blocks, default is remove
      * @var      boolean
      * @access   public
      */
-    var $removeEmptyBlocks = true;
+    public $removeEmptyBlocks = true;
 
     /**
      * Name of the current block
      * @var      string
      */
-    var $currentBlock = '__global__';
+    private $currentBlock = '__global__';
 
     /**
      * Template blocks and their content
@@ -212,7 +212,7 @@ class HTML_Template_Sigma extends PEAR
      * @see      _buildBlocks()
      * @access   private
      */
-    var $_blocks = array();
+    private $_blocks = array();
 
     /**
      * Content of parsed blocks
@@ -220,7 +220,7 @@ class HTML_Template_Sigma extends PEAR
      * @see      get(), parse()
      * @access   private
      */
-    var $_parsedBlocks = array();
+    private $_parsedBlocks = array();
 
     /**
      * Variable names that appear in the block
@@ -228,7 +228,7 @@ class HTML_Template_Sigma extends PEAR
      * @see      _buildBlockVariables()
      * @access   private
      */
-    var $_blockVariables = array();
+    private $_blockVariables = array();
 
     /**
      * Inner blocks inside the block
@@ -236,7 +236,7 @@ class HTML_Template_Sigma extends PEAR
      * @see      _buildBlocks()
      * @access   private
      */
-    var $_children = array();
+    private $_children = array();
 
     /**
      * List of blocks to preserve even if they are "empty"
@@ -244,7 +244,7 @@ class HTML_Template_Sigma extends PEAR
      * @see      touchBlock(), $removeEmptyBlocks
      * @access   private
      */
-    var $_touchedBlocks = array();
+    private $_touchedBlocks = array();
 
     /**
      * List of blocks which should not be shown even if not "empty"
@@ -252,7 +252,7 @@ class HTML_Template_Sigma extends PEAR
      * @see      hideBlock(), $removeEmptyBlocks
      * @access   private
      */
-    var $_hiddenBlocks = array();
+    private $_hiddenBlocks = array();
 
     /**
      * Variables for substitution.
@@ -264,7 +264,7 @@ class HTML_Template_Sigma extends PEAR
      * @see      setVariable()
      * @access   private
      */
-    var $_variables = array();
+    private $_variables = array();
 
     /**
      * Global variables for substitution
@@ -278,14 +278,14 @@ class HTML_Template_Sigma extends PEAR
      * @see      setVariable(), setGlobalVariable()
      * @access   private
      */
-    var $_globalVariables = array();
+    private $_globalVariables = array();
 
     /**
      * Root directory for "source" templates
      * @var    string
      * @see    HTML_Template_Sigma(), setRoot()
      */
-    var $fileRoot = '';
+    public $fileRoot = '';
 
     /**
      * Directory to store the "prepared" templates in
@@ -293,13 +293,13 @@ class HTML_Template_Sigma extends PEAR
      * @see      HTML_Template_Sigma(), setCacheRoot()
      * @access   private
      */
-    var $_cacheRoot = null;
+    private $_cacheRoot = null;
 
     /**
      * Flag indicating that the global block was parsed
      * @var    boolean
      */
-    var $flagGlobalParsed = false;
+    public $flagGlobalParsed = false;
 
     /**
      * Options to control some finer aspects of Sigma's work.
@@ -307,7 +307,7 @@ class HTML_Template_Sigma extends PEAR
      * @var      array
      * @access   private
      */
-    var $_options = array(
+    private $_options = array(
         'preserve_data' => false,
         'trim_on_save'  => true,
         'charset'       => 'iso-8859-1'
@@ -317,60 +317,60 @@ class HTML_Template_Sigma extends PEAR
      * Function name prefix used when searching for function calls in the template
      * @var    string
      */
-    var $functionPrefix = 'func_';
+    public $functionPrefix = 'func_';
 
     /**
      * Function name RegExp
      * @var    string
      */
-    var $functionnameRegExp = '[_a-zA-Z][A-Za-z_0-9]*';
+    public $functionnameRegExp = '[_a-zA-Z][A-Za-z_0-9]*';
 
     /**
      * RegExp used to grep function calls in the template (set by the constructor)
      * @var    string
      * @see    _buildFunctionlist(), HTML_Template_Sigma()
      */
-    var $functionRegExp = '';
+    public $functionRegExp = '';
 
     /**
      * List of functions found in the template.
      * @var    array
      * @access private
      */
-    var $_functions = array();
+    private $_functions = array();
 
     /**
      * List of callback functions specified by the user
      * @var    array
      * @access private
      */
-    var $_callback = array();
+    private $_callback = array();
 
     /**
      * RegExp used to find file inclusion calls in the template
      * @var  string
      */
-    var $includeRegExp = '#<!--\s+INCLUDE\s+(\S+)\s+-->#im';
+    public $includeRegExp = '#<!--\s+INCLUDE\s+(\S+)\s+-->#im';
 
     /**
      * RegExp used to find (and remove) comments in the template
      * @var  string
      */
-    var $commentRegExp = '#<!--\s+COMMENT\s+-->.*?<!--\s+/COMMENT\s+-->#sm';
+    public $commentRegExp = '#<!--\s+COMMENT\s+-->.*?<!--\s+/COMMENT\s+-->#sm';
 
     /**
      * Files queued for inclusion
      * @var    array
      * @access private
      */
-    var $_triggers = array();
+    private $_triggers = array();
 
     /**
      * Name of the block to use in _makeTrigger() (see bug #20068)
      * @var string
      * @access private
      */
-    var $_triggerBlock = '__global__';
+    private $_triggerBlock = '__global__';
 
     /**
      * Constructor: builds some complex regular expressions and optionally
@@ -384,7 +384,7 @@ class HTML_Template_Sigma extends PEAR
      *
      * @see   setRoot(), setCacheRoot()
      */
-    function __construct($root = '', $cacheRoot = '')
+    public function __construct($root = '', $cacheRoot = '')
     {
         // the class is inherited from PEAR to be able to use $this->setErrorHandling()
         $this->PEAR();
@@ -416,7 +416,7 @@ class HTML_Template_Sigma extends PEAR
      * @access public
      * @return void
      */
-    function setRoot($root)
+    public function setRoot($root)
     {
         if (('' != $root) && (DIRECTORY_SEPARATOR != substr($root, -1))) {
             $root .= DIRECTORY_SEPARATOR;
@@ -444,7 +444,7 @@ class HTML_Template_Sigma extends PEAR
      * @access public
      * @return void
      */
-    function setCacheRoot($root)
+    public function setCacheRoot($root)
     {
         if (empty($root)) {
             $root = null;
@@ -473,7 +473,7 @@ class HTML_Template_Sigma extends PEAR
      * @access public
      * @return mixed SIGMA_OK on success, error object on failure
      */
-    function setOption($option, $value)
+    public function setOption($option, $value)
     {
         if (isset($this->_options[$option])) {
             $this->_options[$option] = $value;
@@ -492,7 +492,7 @@ class HTML_Template_Sigma extends PEAR
      * @access public
      * @return string error message
      */
-    function errorMessage($code, $data = null)
+    public function errorMessage($code, $data = null)
     {
         static $errorMessages;
         if (!isset($errorMessages)) {
@@ -533,7 +533,7 @@ class HTML_Template_Sigma extends PEAR
      * @return  void
      * @see     get()
      */
-    function show($block = '__global__')
+    public function show($block = '__global__')
     {
         print $this->get($block);
     }
@@ -550,7 +550,7 @@ class HTML_Template_Sigma extends PEAR
      * @access public
      * @see    show()
      */
-    function get($block = '__global__', $clear = false)
+    public function get($block = '__global__', $clear = false)
     {
         if (!isset($this->_blocks[$block])) {
             return $this->raiseError($this->errorMessage(SIGMA_BLOCK_NOT_FOUND, $block), SIGMA_BLOCK_NOT_FOUND);
@@ -592,7 +592,7 @@ class HTML_Template_Sigma extends PEAR
      * @see    parseCurrentBlock()
      * @throws PEAR_Error
      */
-    function parse($block = '__global__', $flagRecursion = false, $fakeParse = false)
+    public function parse($block = '__global__', $flagRecursion = false, $fakeParse = false)
     {
         static $vars;
 
@@ -720,7 +720,7 @@ class HTML_Template_Sigma extends PEAR
      * @access public
      * @return void
      */
-    function setVariable($variable, $value = '')
+    public function setVariable($variable, $value = '')
     {
         if (is_array($variable)) {
             $this->_variables = array_merge($this->_variables, $variable);
@@ -744,7 +744,7 @@ class HTML_Template_Sigma extends PEAR
      * @return void
      * @see    setVariable()
      */
-    function setGlobalVariable($variable, $value = '')
+    public function setGlobalVariable($variable, $value = '')
     {
         if (is_array($variable)) {
             $this->_globalVariables = array_merge($this->_globalVariables, $variable);
@@ -767,7 +767,7 @@ class HTML_Template_Sigma extends PEAR
      * @return mixed SIGMA_OK on success, error object on failure
      * @throws PEAR_Error
      */
-    function setCurrentBlock($block = '__global__')
+    public function setCurrentBlock($block = '__global__')
     {
         if (!isset($this->_blocks[$block])) {
             return $this->raiseError($this->errorMessage(SIGMA_BLOCK_NOT_FOUND, $block), SIGMA_BLOCK_NOT_FOUND);
@@ -784,7 +784,7 @@ class HTML_Template_Sigma extends PEAR
      * @access public
      * @return bool whether the block was "empty"
      */
-    function parseCurrentBlock()
+    public function parseCurrentBlock()
     {
         return $this->parse($this->currentBlock);
     }
@@ -828,7 +828,7 @@ class HTML_Template_Sigma extends PEAR
      * @throws PEAR_Error
      * @see    $removeEmptyBlocks, $_touchedBlocks
      */
-    function touchBlock($block)
+    public function touchBlock($block)
     {
         if (!isset($this->_blocks[$block])) {
             return $this->raiseError($this->errorMessage(SIGMA_BLOCK_NOT_FOUND, $block), SIGMA_BLOCK_NOT_FOUND);
@@ -858,7 +858,7 @@ class HTML_Template_Sigma extends PEAR
      * @return mixed SIGMA_OK on success, error object on failure
      * @throws PEAR_Error
      */
-    function hideBlock($block)
+    public function hideBlock($block)
     {
         if (!isset($this->_blocks[$block])) {
             return $this->raiseError($this->errorMessage(SIGMA_BLOCK_NOT_FOUND, $block), SIGMA_BLOCK_NOT_FOUND);
@@ -885,7 +885,7 @@ class HTML_Template_Sigma extends PEAR
      * @return mixed SIGMA_OK on success, error object on failure
      * @see    loadTemplatefile()
      */
-    function setTemplate($template, $removeUnknownVariables = true, $removeEmptyBlocks = true)
+    public function setTemplate($template, $removeUnknownVariables = true, $removeEmptyBlocks = true)
     {
         $this->_resetTemplate($removeUnknownVariables, $removeEmptyBlocks);
         $list = $this->_buildBlocks(
@@ -916,7 +916,7 @@ class HTML_Template_Sigma extends PEAR
      * @return mixed SIGMA_OK on success, error object on failure
      * @see    setTemplate(), $removeUnknownVariables, $removeEmptyBlocks
      */
-    function loadTemplateFile($filename, $removeUnknownVariables = true, $removeEmptyBlocks = true)
+    public function loadTemplateFile($filename, $removeUnknownVariables = true, $removeEmptyBlocks = true)
     {
         if ($this->_isCached($filename)) {
             $this->_resetTemplate($removeUnknownVariables, $removeEmptyBlocks);
@@ -956,7 +956,7 @@ class HTML_Template_Sigma extends PEAR
      * @throws PEAR_Error
      * @see    addBlockfile()
      */
-    function addBlock($placeholder, $block, $template)
+    public function addBlock($placeholder, $block, $template)
     {
         if (isset($this->_blocks[$block])) {
             return $this->raiseError($this->errorMessage(SIGMA_BLOCK_EXISTS, $block), SIGMA_BLOCK_EXISTS);
@@ -999,7 +999,7 @@ class HTML_Template_Sigma extends PEAR
      * @throws PEAR_Error
      * @see    addBlock()
      */
-    function addBlockfile($placeholder, $block, $filename)
+    public function addBlockfile($placeholder, $block, $filename)
     {
         if ($this->_isCached($filename)) {
             return $this->_getCached($filename, $block, $placeholder);
@@ -1041,7 +1041,7 @@ class HTML_Template_Sigma extends PEAR
      * @throws PEAR_Error
      * @see    replaceBlockfile(), addBlock()
      */
-    function replaceBlock($block, $template, $keepContent = false)
+    public function replaceBlock($block, $template, $keepContent = false)
     {
         if (!isset($this->_blocks[$block])) {
             return $this->raiseError($this->errorMessage(SIGMA_BLOCK_NOT_FOUND, $block), SIGMA_BLOCK_NOT_FOUND);
@@ -1074,7 +1074,7 @@ class HTML_Template_Sigma extends PEAR
      * @throws PEAR_Error
      * @see    replaceBlock(), addBlockfile()
      */
-    function replaceBlockfile($block, $filename, $keepContent = false)
+    public function replaceBlockfile($block, $filename, $keepContent = false)
     {
         if ($this->_isCached($filename)) {
             $res = $this->_removeBlockData($block, $keepContent);
@@ -1106,7 +1106,7 @@ class HTML_Template_Sigma extends PEAR
      * @access public
      * @return bool
      */
-    function blockExists($block)
+    public function blockExists($block)
     {
         return isset($this->_blocks[$block]);
     }
@@ -1123,7 +1123,7 @@ class HTML_Template_Sigma extends PEAR
      *                If the placeholder was not found an empty string is returned.
      * @throws PEAR_Error
      */
-    function placeholderExists($placeholder, $block = '')
+    public function placeholderExists($placeholder, $block = '')
     {
         if ('' != $block && !isset($this->_blocks[$block])) {
             return $this->raiseError($this->errorMessage(SIGMA_BLOCK_NOT_FOUND, $block), SIGMA_BLOCK_NOT_FOUND);
@@ -1184,7 +1184,7 @@ class HTML_Template_Sigma extends PEAR
      * @return mixed SIGMA_OK on success, error object on failure
      * @throws PEAR_Error
      */
-    function setCallbackFunction($tplFunction, $callback, $preserveArgs = false)
+    public function setCallbackFunction($tplFunction, $callback, $preserveArgs = false)
     {
         if (!is_callable($callback)) {
             return $this->raiseError($this->errorMessage(SIGMA_INVALID_CALLBACK), SIGMA_INVALID_CALLBACK);
@@ -1212,7 +1212,7 @@ class HTML_Template_Sigma extends PEAR
      * @return array a list of child blocks
      * @throws PEAR_Error
      */
-    function getBlockList($parent = '__global__', $recursive = false)
+    public function getBlockList($parent = '__global__', $recursive = false)
     {
         if (!isset($this->_blocks[$parent])) {
             return $this->raiseError($this->errorMessage(SIGMA_BLOCK_NOT_FOUND, $parent), SIGMA_BLOCK_NOT_FOUND);
@@ -1243,7 +1243,7 @@ class HTML_Template_Sigma extends PEAR
      * @return array a list of placeholders
      * @throws PEAR_Error
      */
-    function getPlaceholderList($block = '__global__')
+    public function getPlaceholderList($block = '__global__')
     {
         if (!isset($this->_blocks[$block])) {
             return $this->raiseError($this->errorMessage(SIGMA_BLOCK_NOT_FOUND, $block), SIGMA_BLOCK_NOT_FOUND);
@@ -1270,7 +1270,7 @@ class HTML_Template_Sigma extends PEAR
      * @return void
      * @see    setVariable()
      */
-    function clearVariables()
+    public function clearVariables()
     {
         $this->_variables = array();
     }
@@ -1291,7 +1291,7 @@ class HTML_Template_Sigma extends PEAR
       * @access private
       * @return array array with 'name.key' keys
       */
-    function _flattenVariables($name, $array)
+    private function _flattenVariables($name, $array)
     {
         $ret = array();
         foreach ($array as $key => $value) {
@@ -1316,7 +1316,7 @@ class HTML_Template_Sigma extends PEAR
      * @return mixed SIGMA_OK on success, error object on failure
      * @see    _buildFunctionlist()
      */
-    function _buildBlockVariables($block = '__global__')
+    private function _buildBlockVariables($block = '__global__')
     {
         $this->_blockVariables[$block] = array();
         $this->_functions[$block]      = array();
@@ -1364,7 +1364,7 @@ class HTML_Template_Sigma extends PEAR
      * @throws PEAR_Error
      * @see    $_blocks
      */
-    function _buildBlocks($string)
+    private function _buildBlocks($string)
     {
         $blocks = array();
         if (preg_match_all($this->blockRegExp, $string, $regs, PREG_SET_ORDER)) {
@@ -1406,7 +1406,7 @@ class HTML_Template_Sigma extends PEAR
      * @return void
      * @see    setTemplate(), loadTemplateFile()
      */
-    function _resetTemplate($removeUnknownVariables = true, $removeEmptyBlocks = true)
+    private function _resetTemplate($removeUnknownVariables = true, $removeEmptyBlocks = true)
     {
         $this->removeUnknownVariables = $removeUnknownVariables;
         $this->removeEmptyBlocks      = $removeEmptyBlocks;
@@ -1432,7 +1432,7 @@ class HTML_Template_Sigma extends PEAR
      * @return bool yes/no
      * @see    loadTemplatefile(), addBlockfile(), replaceBlockfile()
      */
-    function _isCached($filename)
+    public function _isCached($filename)
     {
         if (null === $this->_cacheRoot) {
             return false;
@@ -1455,7 +1455,7 @@ class HTML_Template_Sigma extends PEAR
      * @return mixed SIGMA_OK on success, error object on failure
      * @see    loadTemplatefile(), addBlockfile(), replaceBlockfile()
      */
-    function _getCached($filename, $block = '__global__', $placeholder = '')
+    private function _getCached($filename, $block = '__global__', $placeholder = '')
     {
         // the same checks are done in addBlock()
         if (!empty($placeholder)) {
@@ -1515,7 +1515,7 @@ class HTML_Template_Sigma extends PEAR
      * @access private
      * @return string filename
      */
-    function _cachedName($filename)
+    public function _cachedName($filename)
     {
         if (OS_WINDOWS) {
             $filename = str_replace(array('/', '\\', ':'), array('__', '__', ''), $filename);
@@ -1538,7 +1538,7 @@ class HTML_Template_Sigma extends PEAR
      * @access private
      * @return mixed SIGMA_OK on success, error object on failure
      */
-    function _writeCache($filename, $block)
+    private function _writeCache($filename, $block)
     {
         // do not save anything if no cache dir, but do pull triggers
         if (null !== $this->_cacheRoot) {
@@ -1592,7 +1592,7 @@ class HTML_Template_Sigma extends PEAR
      * @return mixed SIGMA_OK on success, error object on failure
      * @link http://pear.php.net/bugs/bug.php?id=19220
      */
-    function _writeFileAtomically($fileName, $content)
+    private function _writeFileAtomically($fileName, $content)
     {
         $dirName = dirname($fileName);
         $tmpFile = tempnam($dirName, basename($fileName));
@@ -1639,7 +1639,7 @@ class HTML_Template_Sigma extends PEAR
      * @access private
      * @return void
      */
-    function _buildCache(&$cache, $block)
+    private function _buildCache(&$cache, $block)
     {
         if (!$this->_options['trim_on_save']) {
             $cache['blocks'][$block] = $this->_blocks[$block];
@@ -1673,7 +1673,7 @@ class HTML_Template_Sigma extends PEAR
      * @return mixed SIGMA_OK on success, error object on failure
      * @see    replaceBlock(), replaceBlockfile()
      */
-    function _removeBlockData($block, $keepContent = false)
+    private function _removeBlockData($block, $keepContent = false)
     {
         if (!isset($this->_blocks[$block])) {
             return $this->raiseError($this->errorMessage(SIGMA_BLOCK_NOT_FOUND, $block), SIGMA_BLOCK_NOT_FOUND);
@@ -1705,7 +1705,7 @@ class HTML_Template_Sigma extends PEAR
      * @return array block names
      * @see    addBlock(), addBlockfile(), placeholderExists()
      */
-    function _findParentBlocks($variable)
+    private function _findParentBlocks($variable)
     {
         $parents = array();
         foreach ($this->_blockVariables as $blockname => $varnames) {
@@ -1729,7 +1729,7 @@ class HTML_Template_Sigma extends PEAR
      * @access private
      * @return void
      */
-    function _replacePlaceholder($parent, $placeholder, $block)
+    private function _replacePlaceholder($parent, $placeholder, $block)
     {
         $this->_children[$parent][$block] = true;
         $this->_blockVariables[$parent]['__'.$block.'__'] = true;
@@ -1750,7 +1750,7 @@ class HTML_Template_Sigma extends PEAR
      * @access private
      * @return string  a placeholder
      */
-    function _makeTrigger($matches)
+    private function _makeTrigger($matches)
     {
         $name = 'trigger_' . substr(md5($matches[1] . ' ' . uniqid($this->_triggerBlock)), 0, 10);
         $this->_triggers[$this->_triggerBlock][$name] = $matches[1];
@@ -1767,7 +1767,7 @@ class HTML_Template_Sigma extends PEAR
      * @return mixed SIGMA_OK on success, error object on failure
      * @see _makeTrigger(), addBlockfile()
      */
-    function _pullTriggers($triggers)
+    private function _pullTriggers($triggers)
     {
         foreach ($triggers as $placeholder => $filename) {
             if (SIGMA_OK !== ($res = $this->addBlockfile($placeholder, $placeholder, $filename))) {
@@ -1816,7 +1816,7 @@ class HTML_Template_Sigma extends PEAR
      * @return mixed SIGMA_OK on success, error object on failure
      * @see    _buildBlockVariables()
      */
-    function _buildFunctionlist($block)
+    private function _buildFunctionlist($block)
     {
         $template = $this->_blocks[$block];
         $this->_blocks[$block] = '';
@@ -1955,7 +1955,7 @@ class HTML_Template_Sigma extends PEAR
      * @access private
      * @return string
      */
-    function _preserveOpeningDelimiter($str)
+    private function _preserveOpeningDelimiter($str)
     {
         return (false === strpos($str, $this->openingDelimiter))
                ? $str
@@ -1974,7 +1974,7 @@ class HTML_Template_Sigma extends PEAR
      * @access private
      * @return string
      */
-    function _jsEscape($value)
+    private function _jsEscape($value)
     {
         return strtr(
             $value,
@@ -1994,7 +1994,7 @@ class HTML_Template_Sigma extends PEAR
      * @access private
      * @return string
      */
-    function _htmlspecialchars($value)
+    private function _htmlspecialchars($value)
     {
         return htmlspecialchars($value, ENT_COMPAT, $this->_options['charset']);
     }
@@ -2008,7 +2008,7 @@ class HTML_Template_Sigma extends PEAR
      * @access private
      * @return string
      */
-    function _htmlentities($value)
+    private function _htmlentities($value)
     {
         return htmlentities($value, ENT_COMPAT, $this->_options['charset']);
     }
