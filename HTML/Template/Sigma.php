@@ -19,10 +19,10 @@
  * @link      http://pear.php.net/package/HTML_Template_Sigma
  */
 
-/**
- * PEAR and PEAR_Error classes (for error handling)
- */
-require_once 'PEAR.php';
+// pear-package-only /**
+// pear-package-only  * PEAR and PEAR_Error classes (for error handling)
+// pear-package-only  */
+// pear-package-only require_once 'PEAR.php';
 
 /**#@+
  * Error codes

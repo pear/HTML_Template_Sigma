@@ -77,25 +77,21 @@ Features:
      <file name="replaceblock.html" role="test" />
      <file name="__include.html" role="test" />
     </dir> <!-- /tests/templates -->
-    <file name="AllTests.php" role="test">
+    <file name="SigmaApiTest.php" role="test">
      <tasks:replace from="@package_version@" to="version" type="package-info" />
     </file>
-    <file name="Sigma_api_testcase.php" role="test">
+    <file name="SigmaCacheTest.php" role="test">
      <tasks:replace from="@package_version@" to="version" type="package-info" />
     </file>
-    <file name="Sigma_bug_testcase.php" role="test">
-     <tasks:replace from="@package_version@" to="version" type="package-info" />
-    </file>
-    <file name="Sigma_cache_testcase.php" role="test">
-     <tasks:replace from="@package_version@" to="version" type="package-info" />
-    </file>
-    <file name="Sigma_usage_testcase.php" role="test">
+    <file name="SigmaUsageTest.php" role="test">
      <tasks:replace from="@package_version@" to="version" type="package-info" />
     </file>
    </dir> <!-- /tests -->
-   <file name="HTML/Template/Sigma.php" role="php">
-    <tasks:replace from="@package_version@" to="version" type="package-info" />
-   </file>
+   <dir name="HTML/Template">
+    <file name="Sigma.php" role="php">
+     <tasks:replace from="@package_version@" to="version" type="package-info" />
+    </file>
+   </dir>
   </dir> <!-- / -->
  </contents>
  <dependencies>
