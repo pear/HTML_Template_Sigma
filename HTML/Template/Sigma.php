@@ -169,20 +169,20 @@ class HTML_Template_Sigma extends PEAR
     /**
      * RegExp used to find variable placeholder, filled by the constructor
      * @var      string    Looks somewhat like @(delimiter varname delimiter)@
-     * @see      HTML_Template_Sigma()
+     * @see      __construct()
      */
     var $variablesRegExp = '';
 
     /**
      * RegExp used to strip unused variable placeholders
-     * @see      $variablesRegExp, HTML_Template_Sigma()
+     * @see      $variablesRegExp, __construct()
      */
     var $removeVariablesRegExp = '';
 
     /**
      * RegExp used to find blocks and their content, filled by the constructor
      * @var      string
-     * @see      HTML_Template_Sigma()
+     * @see      __construct()
      */
     var $blockRegExp = '';
 
@@ -283,14 +283,14 @@ class HTML_Template_Sigma extends PEAR
     /**
      * Root directory for "source" templates
      * @var    string
-     * @see    HTML_Template_Sigma(), setRoot()
+     * @see    __construct(), setRoot()
      */
     var $fileRoot = '';
 
     /**
      * Directory to store the "prepared" templates in
      * @var      string
-     * @see      HTML_Template_Sigma(), setCacheRoot()
+     * @see      __construct(), setCacheRoot()
      * @access   private
      */
     var $_cacheRoot = null;
@@ -328,7 +328,7 @@ class HTML_Template_Sigma extends PEAR
     /**
      * RegExp used to grep function calls in the template (set by the constructor)
      * @var    string
-     * @see    _buildFunctionlist(), HTML_Template_Sigma()
+     * @see    _buildFunctionlist(), __construct()
      */
     var $functionRegExp = '';
 
@@ -384,10 +384,10 @@ class HTML_Template_Sigma extends PEAR
      *
      * @see   setRoot(), setCacheRoot()
      */
-    function HTML_Template_Sigma($root = '', $cacheRoot = '')
+    public function __construct($root = '', $cacheRoot = '')
     {
         // the class is inherited from PEAR to be able to use $this->setErrorHandling()
-        $this->PEAR();
+        parent::__construct();
         $this->variablesRegExp       = '@' . $this->openingDelimiter . '(' . $this->variablenameRegExp . ')' .
                                        '(:(' . $this->functionnameRegExp . '))?' . $this->closingDelimiter . '@sm';
         $this->removeVariablesRegExp = '@' . $this->openingDelimiter . '\s*(' . $this->variablenameRegExp . ')\s*'
@@ -398,13 +398,24 @@ class HTML_Template_Sigma extends PEAR
         $this->setRoot($root);
         $this->setCacheRoot($cacheRoot);
 
-        $this->setCallbackFunction('h', array(&$this, '_htmlspecialchars'));
-        $this->setCallbackFunction('e', array(&$this, '_htmlentities'));
+        $this->setCallbackFunction('h', array($this, '_htmlspecialchars'));
+        $this->setCallbackFunction('e', array($this, '_htmlentities'));
         $this->setCallbackFunction('u', 'urlencode');
         $this->setCallbackFunction('r', 'rawurlencode');
-        $this->setCallbackFunction('j', array(&$this, '_jsEscape'));
+        $this->setCallbackFunction('j', array($this, '_jsEscape'));
     }
 
+    /**
+     * For backwards compatibility with child classes calling old-style constructor
+     *
+     * @param string $root
+     * @param string $cacheRoot
+     * @return void
+     */
+    public function HTML_Template_Sigma($root = '', $cacheRoot = '')
+    {
+        $this->__construct($root, $cacheRoot);
+    }
 
     /**
      * Sets the file root for templates. The file root gets prefixed to all
@@ -412,7 +423,7 @@ class HTML_Template_Sigma extends PEAR
      *
      * @param string $root directory name
      *
-     * @see    HTML_Template_Sigma()
+     * @see    __construct()
      * @access public
      * @return void
      */
@@ -440,7 +451,7 @@ class HTML_Template_Sigma extends PEAR
      *
      * @param string $root directory name
      *
-     * @see    HTML_Template_Sigma(), _getCached(), _writeCache()
+     * @see    __construct(), _getCached(), _writeCache()
      * @access public
      * @return void
      */
@@ -657,7 +668,7 @@ class HTML_Template_Sigma extends PEAR
             if (0 != count($vars) && (!$flagRecursion || !empty($this->_functions[$block]))) {
                 $varKeys     = array_keys($vars);
                 $varValues   = $this->_options['preserve_data']
-                               ? array_map(array(&$this, '_preserveOpeningDelimiter'), array_values($vars))
+                               ? array_map(array($this, '_preserveOpeningDelimiter'), array_values($vars))
                                : array_values($vars);
             }
 
@@ -927,7 +938,7 @@ class HTML_Template_Sigma extends PEAR
         }
         $this->_triggers     = array();
         $this->_triggerBlock = '__global__';
-        $template = preg_replace_callback($this->includeRegExp, array(&$this, '_makeTrigger'), $template);
+        $template = preg_replace_callback($this->includeRegExp, array($this, '_makeTrigger'), $template);
         if (SIGMA_OK !== ($res = $this->setTemplate($template, $removeUnknownVariables, $removeEmptyBlocks))) {
             return $res;
         } else {
@@ -1008,7 +1019,7 @@ class HTML_Template_Sigma extends PEAR
             return $this->raiseError($this->errorMessage(SIGMA_TPL_NOT_FOUND, $filename), SIGMA_TPL_NOT_FOUND);
         }
         list($oldTriggerBlock, $this->_triggerBlock) = array($this->_triggerBlock, $block);
-        $template = preg_replace_callback($this->includeRegExp, array(&$this, '_makeTrigger'), $template);
+        $template = preg_replace_callback($this->includeRegExp, array($this, '_makeTrigger'), $template);
         $this->_triggerBlock = $oldTriggerBlock;
         if (SIGMA_OK !== ($res = $this->addBlock($placeholder, $block, $template))) {
             return $res;
@@ -1088,7 +1099,7 @@ class HTML_Template_Sigma extends PEAR
             return $this->raiseError($this->errorMessage(SIGMA_TPL_NOT_FOUND, $filename), SIGMA_TPL_NOT_FOUND);
         }
         list($oldTriggerBlock, $this->_triggerBlock) = array($this->_triggerBlock, $block);
-        $template = preg_replace_callback($this->includeRegExp, array(&$this, '_makeTrigger'), $template);
+        $template = preg_replace_callback($this->includeRegExp, array($this, '_makeTrigger'), $template);
         $this->_triggerBlock = $oldTriggerBlock;
         if (SIGMA_OK !== ($res = $this->replaceBlock($block, $template, $keepContent))) {
             return $res;
