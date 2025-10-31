@@ -87,10 +87,10 @@ class SigmaApiTest extends TestCase
         // "scalar" call
         $this->tpl->setVariable('placeholder1', 'var1');
         // array call
-        $this->tpl->setVariable(array(
+        $this->tpl->setVariable([
             'placeholder2' => 'var2',
             'placeholder3' => 'var3'
-        ));
+        ]);
         $this->assertEquals('var1 var2 var3', $this->tpl->get());
     }
 
@@ -101,13 +101,13 @@ class SigmaApiTest extends TestCase
     function testExtendedSetVariale()
     {
         $this->tpl->setTemplate('{index1.0} {index1.subindex1} {index1.subindex2.0}', true, true);
-        $this->tpl->setVariable('index1', array(
+        $this->tpl->setVariable('index1', [
             'var1',
             'subindex1' => 'var2',
-            'subindex2' => array(
+            'subindex2' => [
                 'var3'
-            )
-        ));
+            ]
+        ]);
         $this->assertEquals('var1 var2 var3', $this->tpl->get());
     }
 
@@ -137,19 +137,19 @@ class SigmaApiTest extends TestCase
     {
         $this->tpl->setTemplate('{placeholder1},{placeholder2},{placeholder3},{placeholder4.index}', true, true);
         // we do not set {placeholder3}
-        $this->tpl->setVariable(array(
+        $this->tpl->setVariable([
             'placeholder1' => 'var1',
             'placeholder2' => 'var2'
-        ));
+        ]);
         $this->assertEquals('var1,var2,,', $this->tpl->get());
 
         // Default behaviour is to remove {stuff} from data as well
         $this->tpl->setTemplate('{placeholder1},{placeholder2},{placeholder3}', true, true);
-        $this->tpl->setVariable(array(
+        $this->tpl->setVariable([
             'placeholder1' => 'var1',
             'placeholder2' => 'var2',
             'placeholder3' => 'var3{stuff}'
-        ));
+        ]);
         $this->assertEquals('var1,var2,var3', $this->tpl->get());
     }
 
@@ -168,10 +168,10 @@ class SigmaApiTest extends TestCase
             return;
         }
         $this->tpl->loadTemplateFile('blockiteration.html', false, true);
-        $this->tpl->setVariable(array(
+        $this->tpl->setVariable([
             'outer' => 'data',
             'inner' => 'stuff'
-        ));
+        ]);
         // inner_block is not empty, but should be removed nonetheless
         $this->tpl->hideBlock('inner_block');
         $this->assertEquals('data#', $this->_stripWhitespace($this->tpl->get()));
@@ -184,12 +184,12 @@ class SigmaApiTest extends TestCase
         }
         $this->tpl->loadTemplateFile('globals.html', false, true);
         $this->tpl->setGlobalVariable('glob', 'glob');
-        $this->tpl->setGlobalVariable('globArray', array('glob1', 'glob2'));
+        $this->tpl->setGlobalVariable('globArray', ['glob1', 'glob2']);
         // {var2} is not, block_two should be removed
-        $this->tpl->setVariable(array(
+        $this->tpl->setVariable([
             'var1' => 'one',
             'var3' => 'three'
-        ));
+        ]);
         for ($i = 0; $i < 3; $i++) {
             $this->tpl->setVariable('var4', $i + 1);
             $this->tpl->parse('block_four');
@@ -204,11 +204,11 @@ class SigmaApiTest extends TestCase
         }
         $this->tpl->setTemplate('{placeholder1},{placeholder2},{placeholder3}', true, true);
         $this->tpl->setOption('preserve_data', true);
-        $this->tpl->setVariable(array(
+        $this->tpl->setVariable([
             'placeholder1' => 'var1',
             'placeholder2' => 'var2',
             'placeholder3' => 'var3{stuff}'
-        ));
+        ]);
         $this->assertEquals('var1,var2,var3{stuff}', $this->tpl->get());
     }
 
@@ -282,10 +282,10 @@ class SigmaApiTest extends TestCase
         $this->tpl->replaceBlockfile('old_block', 'replaceblock.html', false);
         $this->assertTrue(!$this->tpl->blockExists('old_inner_block') && !$this->tpl->placeholderExists('old_var'),
                           'The replaced block\'s contents seem to be still present');
-        $this->tpl->setVariable(array(
+        $this->tpl->setVariable([
             'replaced_var'       => 'replaced_value',
             'replaced_inner_var' => 'inner_value'
-        ));
+        ]);
         $this->tpl->parse('old_block');
         // this time old_block's contents should be preserved
         $this->tpl->replaceBlockfile('old_block', 'addblock.html', true);
@@ -298,9 +298,9 @@ class SigmaApiTest extends TestCase
         $this->tpl->loadTemplatefile('callback.html', true, true);
         $this->tpl->setVariable('username', 'luser');
         $this->tpl->setCallbackFunction('uppercase', 'strtoupper');
-        $this->tpl->setCallbackFunction('russian', array(&$this, '_doRussian'), true);
+        $this->tpl->setCallbackFunction('russian', [$this, '_doRussian'], true);
         $this->tpl->setCallbackFunction('lowercase', 'strtolower');
-        $this->tpl->setCallBackFunction('noarg', array(&$this, '_doCallback'));
+        $this->tpl->setCallBackFunction('noarg', [$this, '_doCallback']);
         $this->assertEquals('callback#word#HELLO,LUSER!#Привет,luser!', $this->_stripWhitespace($this->tpl->get()));
     }
 
@@ -311,34 +311,34 @@ class SigmaApiTest extends TestCase
 
     function _doRussian($arg)
     {
-        $ary = array('Hello, {username}!' => 'Привет, {username}!');
+        $ary = ['Hello, {username}!' => 'Привет, {username}!'];
         return isset($ary[$arg])? $ary[$arg]: $arg;
     }
 
     function testGetBlockList()
     {
         // expected tree...
-        $tree = array(
+        $tree = [
             'name'     => '__global__',
-            'children' => array(
-                array(
+            'children' => [
+                [
                     'name'     => 'outer_block',
-                    'children' => array(
-                        array('name' => 'inner_block')
-                    )
-                )
-            )
-        );
+                    'children' => [
+                        ['name' => 'inner_block']
+                    ]
+                ]
+            ]
+        ];
 
         $this->tpl->loadTemplatefile('blockiteration.html', true, true);
         $this->assertEquals($tree, $this->tpl->getBlockList('__global__', true));
-        $this->assertEquals(array('inner_block'), $this->tpl->getBlockList('outer_block'));
+        $this->assertEquals(['inner_block'], $this->tpl->getBlockList('outer_block'));
     }
 
     function testGetPlaceholderList()
     {
         $this->tpl->loadTemplatefile('blockiteration.html', true, true);
-        $this->assertEquals(array('outer'), $this->tpl->getPlaceholderList('outer_block'));
+        $this->assertEquals(['outer'], $this->tpl->getPlaceholderList('outer_block'));
     }
 
     function testCallbackShorthand()
@@ -346,7 +346,7 @@ class SigmaApiTest extends TestCase
         $this->tpl->setTemplate('{var}|{var:h}|{var:u}|{var:j}|{var:r}|{var:e}|{var:uppercase}|{arrayVar.0:j}|{arrayVar.index:uppercase}', true, true);
         $this->tpl->setCallbackFunction('uppercase', 'strtoupper');
         $this->tpl->setVariable('var', '"m&m" ');
-        $this->tpl->setVariable('arrayVar', array('"m&m"', 'index' => '"m&m"'));
+        $this->tpl->setVariable('arrayVar', ['"m&m"', 'index' => '"m&m"']);
         $this->assertEquals('"m&m" |&quot;m&amp;m&quot; |%22m%26m%22+|\\x22m&m\\x22 |%22m%26m%22%20|&quot;m&amp;m&quot; |"M&M" |\\x22m&m\\x22|"M&M"', $this->tpl->get());
     }
 
@@ -356,10 +356,10 @@ class SigmaApiTest extends TestCase
             return;
         }
         $this->tpl->setTemplate('<!-- BEGIN block -->{var_1}:<!-- END block -->{var_2}', true, true);
-        $this->tpl->setVariable(array(
+        $this->tpl->setVariable([
             'var_1' => 'a',
             'var_2' => 'b'
-        ));
+        ]);
         $this->tpl->parse('block');
         $this->tpl->clearVariables();
         $this->assertEquals('a:', $this->_stripWhitespace($this->tpl->get()));

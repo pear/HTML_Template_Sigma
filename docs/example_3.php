@@ -23,14 +23,14 @@ if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
 }
 
 // various data to substitute
-$addBlockAry = array(
+$addBlockAry = [
     '&lt;!-- INCLUDE --&gt;' => 'Includes a file from within a template',
     'addBlockfile()'         => 'Creates a new block in place of a variable placeholder',
     'replaceBlockfile()'     => 'Replaces the existing block with a new content'
-);
-$replaceBlockAry = array(
+];
+$replaceBlockAry = [
     'foo', 'bar', 'baz', 'quux'
-);
+];
 
 // instantiate the template object, templates will be loaded from the
 // 'templates' directory, no caching will take place
@@ -47,10 +47,10 @@ $tpl->loadTemplateFile('example_3.html');
 // addblockfile placeholder will be gone, new_block block will appear in its place
 $tpl->addBlockfile('addblockfile', 'new_block', 'example_3_add.html');
 foreach ($addBlockAry as $name => $desc) {
-    $tpl->setVariable(array(
+    $tpl->setVariable([
         'func_name'        => $name,
         'func_description' => $desc
-    ));
+    ]);
     $tpl->parse('added_block');
 }
 

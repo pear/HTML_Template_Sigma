@@ -42,27 +42,27 @@ function letters($str)
     return preg_replace('/[^\\w\\s]/', '', $str);
 }
 
-$ary = array(
-    array('code' => 'SIGMA_OK', 'message' => '&nbsp;', 'reason' => 'Everything went OK', 'solution' => '&nbsp;'),
-    array('code' => 'SIGMA_BLOCK_NOT_FOUND', 'message' => 'Cannot find block <i>\'blockname\'</i>', 'reason' => 'Tried to access block that does not exist', 'solution' => 'Either add the block or fix the block name'),
-    array('code' => 'SIGMA_BLOCK_DUPLICATE', 'message' => 'The name of a block must be unique within a template. Block <i>\'blockname\'</i> found twice.', 'reason' => 'Tried to load a template with several blocks sharing the same name', 'solution' => 'Get rid of one of the blocks or rename it'),
-    array('code' => 'SIGMA_INVALID_CALLBACK', 'message' => 'Callback does not exist', 'reason' => 'A callback function you wanted to use does not exist', 'solution' => 'Pass a name of an existing function to setCallbackfunction()')
-);
+$ary = [
+    ['code' => 'SIGMA_OK', 'message' => '&nbsp;', 'reason' => 'Everything went OK', 'solution' => '&nbsp;'],
+    ['code' => 'SIGMA_BLOCK_NOT_FOUND', 'message' => 'Cannot find block <i>\'blockname\'</i>', 'reason' => 'Tried to access block that does not exist', 'solution' => 'Either add the block or fix the block name'],
+    ['code' => 'SIGMA_BLOCK_DUPLICATE', 'message' => 'The name of a block must be unique within a template. Block <i>\'blockname\'</i> found twice.', 'reason' => 'Tried to load a template with several blocks sharing the same name', 'solution' => 'Get rid of one of the blocks or rename it'],
+    ['code' => 'SIGMA_INVALID_CALLBACK', 'message' => 'Callback does not exist', 'reason' => 'A callback function you wanted to use does not exist', 'solution' => 'Pass a name of an existing function to setCallbackfunction()']
+];
 
 // I speak neither German, nor French. The strings are from phpBB translations (http://www.phpbb.com/)
-$aryI18n = array(
-    'de' => array(
+$aryI18n = [
+    'de' => [
         'Send private message' => 'Private Nachricht senden',
         'Username' => 'Benutzername',
         'Find all posts by {username}' => 'Alle Beitr�ge von {username} anzeigen'
-    ),
-    'fr' => array(
+    ],
+    'fr' => [
         'Send private message' => 'Envoyer un message priv�',
         'Username' => 'Nom d\'utilisateur',
         'Find all posts by {username}' => 'Trouver tous les messages de {username}'
-    )
-);
-$langsAry = array('de' => 'German', 'fr' => 'French');
+    ]
+];
+$langsAry = ['de' => 'German', 'fr' => 'French'];
 
 // instantiate the template object, templates will be loaded from the
 // 'templates' directory, no caching will take place
@@ -86,10 +86,10 @@ foreach ($ary as $item) {
 // 2. Using callbacks for i18n
 // We don't set a callback function, thus the function call will be replaced
 // by function's first argument (better than to throw an error, I think)
-$tpl->setVariable(array(
+$tpl->setVariable([
     'language' => 'English (default)',
     'username' => 'Luser'
-));
+]);
 $tpl->parse('i18n_block');
 
 // Now we set a callback function. Please note the third argument, we
@@ -97,10 +97,10 @@ $tpl->parse('i18n_block');
 // should be done *after* the translation.
 $tpl->setCallbackFunction('translate', 'translate', true);
 foreach (array_keys($aryI18n) as $lang) {
-    $tpl->setVariable(array(
+    $tpl->setVariable([
         'language' => $langsAry[$lang],
         'username' => 'Luser'
-    ));
+    ]);
     $tpl->parse('i18n_block');
 }
 

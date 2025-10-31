@@ -23,31 +23,31 @@ if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
 }
 
 // various data to substitute
-$simpleAry  = array('foo', 'bar', 'baz', 'quux');
-$complexAry = array(
-    array('Error code', 'Error message', 'Reason', 'Solution'),
-    array('SIGMA_OK', '&nbsp;', 'Everything went OK', '&nbsp;'),
-    array('SIGMA_BLOCK_NOT_FOUND', 'Cannot find block \'%s\'', 'Tried to access block that does not exist', 'Either add the block or fix the block name'),
-    array('SIGMA_BLOCK_DUPLICATE', 'The name of a block must be unique within a template. Block \'%s\' found twice.', 'Tried to load a template with several blocks sharing the same name', 'Get rid of one of the blocks or rename it')
-);
-$menuAry    = array(
+$simpleAry  = ['foo', 'bar', 'baz', 'quux'];
+$complexAry = [
+    ['Error code', 'Error message', 'Reason', 'Solution'],
+    ['SIGMA_OK', '&nbsp;', 'Everything went OK', '&nbsp;'],
+    ['SIGMA_BLOCK_NOT_FOUND', 'Cannot find block \'%s\'', 'Tried to access block that does not exist', 'Either add the block or fix the block name'],
+    ['SIGMA_BLOCK_DUPLICATE', 'The name of a block must be unique within a template. Block \'%s\' found twice.', 'Tried to load a template with several blocks sharing the same name', 'Get rid of one of the blocks or rename it']
+];
+$menuAry    = [
     'foo'  => 'First menu element',
     'bar'  => 'Second menu element',
     'baz'  => 'Another menu element',
     'quux' => 'Yet another menu element'
-);
+];
 $menuSelected = 'bar';
-$touchAry     = array(
-    array('apples', 10),
+$touchAry     = [
+    ['apples', 10],
     false,
-    array('oranges', 20)
-);
-$hideAry      = array(
-    array('restricted' => false, 'data' => array('item_id' => 'foo', 'item_title' => 'Some data')),
-    array('restricted' => true,  'data' => array('item_id' => 'bar', 'item_title' => 'More data')),
-    array('restricted' => true,  'data' => array('item_id' => 'baz', 'item_title' => 'Even more data')),
-    array('restricted' => false, 'data' => array('item_id' => 'quux', 'item_title' => 'Still even more data'))
-);
+    ['oranges', 20]
+];
+$hideAry      = [
+    ['restricted' => false, 'data' => ['item_id' => 'foo', 'item_title' => 'Some data']],
+    ['restricted' => true,  'data' => ['item_id' => 'bar', 'item_title' => 'More data']],
+    ['restricted' => true,  'data' => ['item_id' => 'baz', 'item_title' => 'Even more data']],
+    ['restricted' => false, 'data' => ['item_id' => 'quux', 'item_title' => 'Still even more data']]
+];
 
 // instantiate the template object, templates will be loaded from the
 // 'templates' directory, no caching will take place
@@ -88,10 +88,10 @@ foreach ($menuAry as $url => $title) {
         $tpl->setVariable('menu_title', $title);
         $tpl->parse('menu_selected');
     } else {
-        $tpl->setVariable(array(
+        $tpl->setVariable([
             'menu_url'   => $url,
             'menu_title' => $title
-        ));
+        ]);
         $tpl->parse('menu_normal');
     }
     // once again, the outer block is parsed after the inner
@@ -102,10 +102,10 @@ foreach ($menuAry as $url => $title) {
 // touchBlock() example
 foreach ($touchAry as $item) {
     if (is_array($item)) {
-        $tpl->setVariable(array(
+        $tpl->setVariable([
             'touch_stuff'    => $item[0],
             'touch_quantity' => $item[1]
-        ));
+        ]);
     } else {
         $tpl->touchBlock('empty_row');
     }

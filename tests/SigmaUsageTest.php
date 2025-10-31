@@ -64,12 +64,12 @@ class SigmaUsageTest extends TestCase
     */
     function testBlockIteration()
     {
-        $data = array(
+        $data = [
             'a',
-            array('b', array('1', '2', '3', '4')),
+            ['b', ['1', '2', '3', '4']],
             'c',
-            array('d', array('5', '6', '7'))
-        );
+            ['d', ['5', '6', '7']]
+        ];
 
         $this->tpl->loadTemplateFile('blockiteration.html', true, true);
         foreach ($data as $value) {
@@ -89,7 +89,7 @@ class SigmaUsageTest extends TestCase
 
     function testTouchBlockIteration()
     {
-        $data = array('a','b','c','d','e');
+        $data = ['a','b','c','d','e'];
         $this->tpl->loadTemplateFile('blockiteration.html', true, true);
         for ($i = 0; $i < count($data); $i++) {
             $this->tpl->setVariable('outer', $data[$i]);
@@ -107,13 +107,13 @@ class SigmaUsageTest extends TestCase
         if (!$this->_methodExists('hideBlock')) {
             return;
         }
-        $data = array('a','b','c','d','e');
+        $data = ['a','b','c','d','e'];
         $this->tpl->loadTemplateFile('blockiteration.html', true, true);
         for ($i = 0; $i < count($data); $i++) {
-            $this->tpl->setVariable(array(
+            $this->tpl->setVariable([
                 'inner' => $i + 1,
                 'outer' => $data[$i]
-            ));
+            ]);
             // the inner_block is not empty, but should be removed
             if (0 == $i % 2) {
                 $this->tpl->hideBlock('inner_block');

@@ -22,12 +22,12 @@ if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
     require_once 'HTML/Template/Sigma.php';
 }
 
-$listAry = array(
-    array('foo', 'bar'),
+$listAry = [
+    ['foo', 'bar'],
     'stuff',
-    array('baz', 'quux'),
+    ['baz', 'quux'],
     'more stuff'
-);
+];
 
 // instantiate the template object, templates will be loaded from the
 // 'templates' directory, no caching will take place
@@ -44,19 +44,19 @@ $tpl->loadTemplateFile('example_1.html');
 // you can pass a name and a value to setVariable()
 $tpl->setVariable('var1', 'Value 1');
 // you can also pass an associative array
-$tpl->setVariable(array(
+$tpl->setVariable([
     'var2' => 'Value 2',
     'var3' => 'Value 3'
-));
+]);
 // setGlobalVariable works the same
 $tpl->setGlobalVariable('glob', 'I am global');
 
 // 2. Empty/nonempty blocks
 // 2.1 Non-empty blocks
-$tpl->setVariable(array(
+$tpl->setVariable([
     'var_ne_1' => 'Value for block 1',
     'var_ne_2' => 'Value for subblock 2'
-));
+]);
 // 2.2 Empty blocks
 $tpl->setVariable('var_e_2', 'Value for parent block');
 
@@ -64,10 +64,10 @@ $tpl->setVariable('var_e_2', 'Value for parent block');
 $tpl->setCurrentBlock('list');
 foreach ($listAry as $item) {
     if (is_array($item)) {
-        $tpl->setVariable(array(
+        $tpl->setVariable([
             'local_1' => $item[0],
             'local_2' => $item[1]
-        ));
+        ]);
     } else {
         $tpl->setVariable('local_1', $item);
     }

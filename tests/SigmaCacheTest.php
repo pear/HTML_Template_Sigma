@@ -52,7 +52,7 @@ class SigmaCacheTest extends SigmaApiTest
     function _removeCachedFiles($filename)
     {
         if (!is_array($filename)) {
-            $filename = array($filename);
+            $filename = [$filename];
         }
         foreach ($filename as $file) {
             $cachedName = $this->tpl->_cachedName($file);
@@ -65,7 +65,7 @@ class SigmaCacheTest extends SigmaApiTest
     function assertCacheExists($filename)
     {
         if (!is_array($filename)) {
-            $filename = array($filename);
+            $filename = [$filename];
         }
         foreach ($filename as $file) {
             $cachedName = $this->tpl->_cachedName($file);
@@ -85,25 +85,25 @@ class SigmaCacheTest extends SigmaApiTest
 
     function testAddBlockfile()
     {
-        $this->_removeCachedFiles(array('blocks.html', 'addblock.html'));
+        $this->_removeCachedFiles(['blocks.html', 'addblock.html']);
         parent::testAddBlockfile();
-        $this->assertCacheExists(array('blocks.html', 'addblock.html'));
+        $this->assertCacheExists(['blocks.html', 'addblock.html']);
         parent::testAddBlockfile();
     }
 
     function testReplaceBlockFile()
     {
-        $this->_removeCachedFiles(array('blocks.html', 'replaceblock.html'));
+        $this->_removeCachedFiles(['blocks.html', 'replaceblock.html']);
         parent::testReplaceBlockfile();
-        $this->assertCacheExists(array('blocks.html', 'replaceblock.html'));
+        $this->assertCacheExists(['blocks.html', 'replaceblock.html']);
         parent::testReplaceBlockfile();
     }
 
     function testInclude()
     {
-        $this->_removeCachedFiles(array('include.html', '__include.html'));
+        $this->_removeCachedFiles(['include.html', '__include.html']);
         parent::testInclude();
-        $this->assertCacheExists(array('include.html', '__include.html'));
+        $this->assertCacheExists(['include.html', '__include.html']);
         parent::testInclude();
     }
 
