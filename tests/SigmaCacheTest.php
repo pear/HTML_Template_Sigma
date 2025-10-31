@@ -19,7 +19,7 @@
  * @link        http://pear.php.net/package/HTML_Template_Sigma
  * @ignore
  */
-require_once 'HTML/Template/Sigma.php';
+
 /**
  * Test case for cache functionality
  *
@@ -34,17 +34,19 @@ require_once 'HTML/Template/Sigma.php';
  */
 class SigmaCacheTest extends SigmaApiTest
 {
-    function setUp()
+    private static $cacheDir;
+
+    public static function set_up_before_class()
     {
-        require_once 'System.php';
-        $sys = new System();
-        if (!file_exists(dirname(__FILE__) . '/sigma')) {
-            mkdir(dirname(__FILE__) . '/sigma');
+        if (!class_exists(System::class)) {
+            require_once 'System.php';
         }
-        $this->tpl = new HTML_Template_Sigma(
-            dirname(__FILE__) . '/templates', 
-            dirname(__FILE__) . '/sigma'
-        );
+        self::$cacheDir = System::mktemp('-d sigma');
+    }
+
+    protected function set_up()
+    {
+        $this->tpl = new HTML_Template_Sigma(__DIR__ . '/templates', self::$cacheDir);
     }
 
     function _removeCachedFiles($filename)
@@ -75,9 +77,6 @@ class SigmaCacheTest extends SigmaApiTest
 
     function testLoadTemplatefile()
     {
-        if (!$this->_methodExists('_isCached')) {
-            return;
-        }
         $this->_removeCachedFiles('loadtemplatefile.html');
         parent::testLoadTemplateFile();
         $this->assertCacheExists('loadtemplatefile.html');
@@ -86,9 +85,6 @@ class SigmaCacheTest extends SigmaApiTest
 
     function testAddBlockfile()
     {
-        if (!$this->_methodExists('_isCached')) {
-            return;
-        }
         $this->_removeCachedFiles(array('blocks.html', 'addblock.html'));
         parent::testAddBlockfile();
         $this->assertCacheExists(array('blocks.html', 'addblock.html'));
@@ -97,9 +93,6 @@ class SigmaCacheTest extends SigmaApiTest
 
     function testReplaceBlockFile()
     {
-        if (!$this->_methodExists('_isCached')) {
-            return;
-        }
         $this->_removeCachedFiles(array('blocks.html', 'replaceblock.html'));
         parent::testReplaceBlockfile();
         $this->assertCacheExists(array('blocks.html', 'replaceblock.html'));
@@ -108,9 +101,6 @@ class SigmaCacheTest extends SigmaApiTest
 
     function testInclude()
     {
-        if (!$this->_methodExists('_isCached')) {
-            return;
-        }
         $this->_removeCachedFiles(array('include.html', '__include.html'));
         parent::testInclude();
         $this->assertCacheExists(array('include.html', '__include.html'));
@@ -119,12 +109,29 @@ class SigmaCacheTest extends SigmaApiTest
 
     function testCallback()
     {
-        if (!$this->_methodExists('_isCached')) {
-            return;
-        }
         $this->_removeCachedFiles('callback.html');
         parent::testCallback();
         $this->assertCacheExists('callback.html');
         parent::testCallback();
+    }
+
+    function testBug6902()
+    {
+        if (!OS_WINDOWS) {
+            $this->markTestSkipped('Test for a Windows-specific bug');
+        }
+        // realpath() on windows will return full path including drive letter
+        $this->tpl->setRoot('');
+        $this->tpl->setCacheRoot(self::$cacheDir);
+        $result = $this->tpl->loadTemplatefile(realpath(dirname(__FILE__) . '\\templates') . '\\' . 'loadtemplatefile.html');
+        if (is_a($result, 'PEAR_Error')) {
+            $this->assertTrue(false, 'Error loading template file: '. $result->getMessage());
+        }
+        $this->assertEquals('A template', trim($this->tpl->get()));
+        $result = $this->tpl->loadTemplatefile(realpath(dirname(__FILE__) . '\\templates') . '\\' . 'loadtemplatefile.html');
+        if (is_a($result, 'PEAR_Error')) {
+            $this->assertTrue(false, 'Error loading template file: '. $result->getMessage());
+        }
+        $this->assertEquals('A template', trim($this->tpl->get()));
     }
 }

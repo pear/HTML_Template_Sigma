@@ -20,6 +20,8 @@
  * @ignore
  */
 
+use Yoast\PHPUnitPolyfills\TestCases\TestCase;
+
 /**
  * Test case for class API
  *
@@ -29,17 +31,17 @@
  * @version     @package_version@
  * @ignore
  */
-class SigmaApiTest extends PHPUnit_Framework_TestCase
+class SigmaApiTest extends TestCase
 {
    /**
     * A template object
-    * @var object
+    * @var HTML_Template_Sigma
     */
-    var $tpl;
+    protected $tpl;
 
-    function setUp()
+    protected function set_up()
     {
-        $this->tpl = new HTML_Template_Sigma(dirname(__FILE__) . '/templates');
+        $this->tpl = new HTML_Template_Sigma(__DIR__ . '/templates');
     }
 
     function _stripWhitespace($str)

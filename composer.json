@@ -1,4 +1,11 @@
 {
+    "name":        "pear/html_template_sigma",
+    "description": "A fork of Integrated Templates (PEAR HTML_Template_IT) with template \"compilation\" added",
+    "type":        "library",
+    "keywords":    ["templating", "template-engine"],
+    "homepage":    "https://pear.php.net/package/HTML_Template_Sigma",
+    "license":     "PHP License",
+
     "authors": [
         {
             "email": "avb@php.net",
@@ -6,26 +13,24 @@
             "role": "Lead"
         }
     ],
-    "autoload": {
-        "psr-0": {
-            "HTML": "./"
-        }
-    },
-    "description": "A fork of Integrated Templates (PEAR HTML_Template_IT) with template \"compilation\" added",
-    "include-path": [
-        "./"
-    ],
-    "license": "PHP License",
-    "name": "pear/html_template_sigma",
     "support": {
-        "issues": "http://pear.php.net/bugs/search.php?cmd=display&package_name[]=HTML_Template_Sigma",
-        "source": "https://github.com/pear/HTML_Template_Sigma"
+        "issues": "https://pear.php.net/bugs/search.php?cmd=display&package_name[]=HTML_Template_Sigma",
+        "source": "https://github.com/pear/HTML_Template_Sigma",
+        "docs":   "https://pear.php.net/manual/en/package.html.html-template-sigma.php"
     },
-    "type": "library",
     "require": {
-        "pear/pear_exception": "*"
+        "php":                    ">=5.6",
+        "pear/pear-core-minimal": "^1.10"
     },
     "require-dev": {
-        "phpunit/phpunit": "*"
+        "yoast/phpunit-polyfills": "^1.0"
+    },
+    "autoload": {
+        "psr-0": {
+            "HTML_Template_Sigma": ""
+        }
+    },
+    "autoload-dev": {
+        "classmap": ["tests"]
     }
 }
