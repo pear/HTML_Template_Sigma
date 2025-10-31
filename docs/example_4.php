@@ -13,14 +13,14 @@
  * @category    HTML
  * @package     HTML_Template_Sigma
  * @author      Alexey Borzov <avb@php.net>
- * @version     CVS: $Id$
  * @ignore
  */
 
-/**
- * Template class
- */
-require_once 'HTML/Template/Sigma.php';
+if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
+    require_once __DIR__ . '/../vendor/autoload.php';
+} else {
+    require_once 'HTML/Template/Sigma.php';
+}
 
 function toggle($item1, $item2)
 {
@@ -54,10 +54,10 @@ $aryI18n = array(
     'de' => array(
         'Send private message' => 'Private Nachricht senden',
         'Username' => 'Benutzername',
-        'Find all posts by {username}' => 'Alle Beiträge von {username} anzeigen'
+        'Find all posts by {username}' => 'Alle Beitrï¿½ge von {username} anzeigen'
     ),
     'fr' => array(
-        'Send private message' => 'Envoyer un message privé',
+        'Send private message' => 'Envoyer un message privï¿½',
         'Username' => 'Nom d\'utilisateur',
         'Find all posts by {username}' => 'Trouver tous les messages de {username}'
     )
@@ -66,7 +66,7 @@ $langsAry = array('de' => 'German', 'fr' => 'French');
 
 // instantiate the template object, templates will be loaded from the
 // 'templates' directory, no caching will take place
-$tpl =& new HTML_Template_Sigma('./templates');
+$tpl = new HTML_Template_Sigma(__DIR__ . '/templates');
 
 // No errors are expected to happen here
 $tpl->setErrorHandling(PEAR_ERROR_DIE);

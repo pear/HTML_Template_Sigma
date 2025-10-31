@@ -13,14 +13,14 @@
  * @category    HTML
  * @package     HTML_Template_Sigma
  * @author      Alexey Borzov <avb@php.net>
- * @version     CVS: $Id$
  * @ignore
  */
 
-/**
- * Template class
- */
-require_once 'HTML/Template/Sigma.php';
+if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
+    require_once __DIR__ . '/../vendor/autoload.php';
+} else {
+    require_once 'HTML/Template/Sigma.php';
+}
 
 // various data to substitute
 $addBlockAry = array(
@@ -34,7 +34,7 @@ $replaceBlockAry = array(
 
 // instantiate the template object, templates will be loaded from the
 // 'templates' directory, no caching will take place
-$tpl =& new HTML_Template_Sigma('./templates');
+$tpl = new HTML_Template_Sigma(__DIR__ . '/templates');
 
 // No errors are expected to happen here
 $tpl->setErrorHandling(PEAR_ERROR_DIE);
