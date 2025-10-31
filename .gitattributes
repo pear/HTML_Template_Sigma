@@ -2,5 +2,6 @@
 /.github export-ignore
 /.gitignore export-ignore
 /package.xml export-ignore
+/pear-package-helper.php export-ignore
 /docs export-ignore
 /tests export-ignore
