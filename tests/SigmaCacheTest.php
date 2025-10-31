@@ -13,9 +13,8 @@
  * @category    HTML
  * @package     HTML_Template_Sigma
  * @author      Alexey Borzov <avb@php.net>
- * @copyright   2001-2007 The PHP Group
+ * @copyright   2001-2025 The PHP Group
  * @license     http://www.php.net/license/3_01.txt PHP License 3.01
- * @version     CVS: $Id$
  * @link        http://pear.php.net/package/HTML_Template_Sigma
  * @ignore
  */
@@ -47,6 +46,7 @@ class SigmaCacheTest extends SigmaApiTest
     protected function set_up()
     {
         $this->tpl = new HTML_Template_Sigma(__DIR__ . '/templates', self::$cacheDir);
+        $this->tpl->setOption('exceptions', true);
     }
 
     function _removeCachedFiles($filename)
@@ -70,7 +70,7 @@ class SigmaCacheTest extends SigmaApiTest
         foreach ($filename as $file) {
             $cachedName = $this->tpl->_cachedName($file);
             if (!@file_exists($cachedName)) {
-                $this->assertTrue(false, "File '$file' is not cached");
+                $this->fail("File '$file' is not cached");
             }
         }
     }
@@ -123,15 +123,10 @@ class SigmaCacheTest extends SigmaApiTest
         // realpath() on windows will return full path including drive letter
         $this->tpl->setRoot('');
         $this->tpl->setCacheRoot(self::$cacheDir);
-        $result = $this->tpl->loadTemplatefile(realpath(dirname(__FILE__) . '\\templates') . '\\' . 'loadtemplatefile.html');
-        if (is_a($result, 'PEAR_Error')) {
-            $this->assertTrue(false, 'Error loading template file: '. $result->getMessage());
-        }
+        $this->tpl->loadTemplatefile(realpath(dirname(__FILE__) . '\\templates') . '\\' . 'loadtemplatefile.html');
         $this->assertEquals('A template', trim($this->tpl->get()));
-        $result = $this->tpl->loadTemplatefile(realpath(dirname(__FILE__) . '\\templates') . '\\' . 'loadtemplatefile.html');
-        if (is_a($result, 'PEAR_Error')) {
-            $this->assertTrue(false, 'Error loading template file: '. $result->getMessage());
-        }
+        $this->tpl->loadTemplatefile(realpath(dirname(__FILE__) . '\\templates') . '\\' . 'loadtemplatefile.html');
         $this->assertEquals('A template', trim($this->tpl->get()));
     }
 }
+?>

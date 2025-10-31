@@ -14,7 +14,7 @@
  * @package   HTML_Template_Sigma
  * @author    Ulf Wendel <ulf.wendel@phpdoc.de>
  * @author    Alexey Borzov <avb@php.net>
- * @copyright 2001-2007 The PHP Group
+ * @copyright 2001-2025 The PHP Group
  * @license   http://www.php.net/license/3_01.txt PHP License 3.01
  * @link      http://pear.php.net/package/HTML_Template_Sigma
  */
@@ -310,7 +310,8 @@ class HTML_Template_Sigma extends PEAR
     var $_options = array(
         'preserve_data' => false,
         'trim_on_save'  => true,
-        'charset'       => 'iso-8859-1'
+        'charset'       => 'iso-8859-1',
+        'exceptions'    => false
     );
 
     /**
@@ -493,6 +494,35 @@ class HTML_Template_Sigma extends PEAR
         return $this->raiseError($this->errorMessage(SIGMA_UNKNOWN_OPTION, $option), SIGMA_UNKNOWN_OPTION);
     }
 
+    /**
+     * Overrides the __call()-backed raiseError() method of base PEAR class
+     *
+     * This will throw a package exception instead of returning
+     * a PEAR_Error object if `setOption('exceptions', true)` was configured
+     *
+     * @return PEAR_Error
+     * @throws HTML_Template_Sigma_Exception
+     */
+    public function raiseError(
+        $message = null,
+        $code = null,
+        $mode = null,
+        $options = null,
+        $userinfo = null,
+        $error_class = null,
+        $skipmsg = false
+    ) {
+        if (!$this->_options['exceptions']) {
+            return parent::_raiseError($this, $message, $code, $mode, $options, $userinfo, $error_class, $skipmsg);
+        } else {
+            // pear-package-only require_once 'HTML/Template/Sigma/Exception.php';
+            throw new HTML_Template_Sigma_Exception(
+                // $message can be an instance of PEAR_Error, we don't pass that here, but the method is public
+                $message instanceof PEAR_Error ? $message->getMessage() : (string)$message,
+                $code
+            );
+        }
+    }
 
     /**
      * Returns a textual error message for an error code
